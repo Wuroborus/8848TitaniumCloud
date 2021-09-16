@@ -71,7 +71,8 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     char* named = new char[50];
     for(int i = 0;i<=99;i++)
     {
-        strcpy(named,"/back_up_");
+        strcpy(named,constcpathto);
+        strcat(named,"/back_up_");
         strcat(named,std::to_string(i).c_str());
         if(opendir(named))
         {
