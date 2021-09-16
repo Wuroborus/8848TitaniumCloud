@@ -68,7 +68,7 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         return;
     }
     else {
-        ui->label_2->setStyleSheet("color:#0f0f0f");
+        ui->label_2->setStyleSheet("color:#f0f0f0");
     }
 
     char* named = new char[50];
@@ -91,7 +91,6 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     char* order = new char[100];
 
     strcpy(order,"mkdir -p ");
-    strcat(order,constcpathto);
     strcat(order,named);
     system(order);
 
