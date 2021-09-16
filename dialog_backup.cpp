@@ -75,11 +75,13 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         strcat(named,std::to_string(i).c_str());
         if(opendir(named))
         {
+            memset(named,0,50);
             continue;
         }
         else {
             break;
         }
+
     }
 
     char* order = new char[100];
