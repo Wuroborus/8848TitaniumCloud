@@ -44,6 +44,9 @@ void Dialog_compare::on_pushButton_clicked()
         ui->label_3->setStyleSheet("color:red");
         return;
     }
+    else {
+        ui->label_3->setStyleSheet("color:#f0f0f0");
+    }
     //进行比较
 
     char* order = new char[100];
@@ -64,9 +67,9 @@ void Dialog_compare::on_pushButton_clicked()
             {
                 break;
             }
-            fclose(ptr);
-            ptr = NULL;
         }
+        fclose(ptr);
+        ptr = NULL;
     }
 
     dialog_compare_result = new Dialog_compare_result(this);
