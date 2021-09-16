@@ -105,6 +105,9 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="backFrom">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -112,6 +115,9 @@
      <width>361</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_5">
@@ -135,6 +141,9 @@
      <width>361</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="label">
