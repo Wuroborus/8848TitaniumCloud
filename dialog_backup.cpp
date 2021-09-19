@@ -100,13 +100,13 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     strcat(order," ");
     strcat(order,named);
     system(order);
-    //修改所有文件夹时间
+   /* //修改所有目录时间
     memset(order,0,100);
     strcpy(order,"find ");
-    strcat(order,constcpathto);
-    strcat(order," -type d -exec touch -r ");
+    strcat(order,named);
+    strcat(order," -exec touch -r ");
     strcat(order,constcpathfrom);
-    strcat(order," {} \\");
+    strcat(order," {} \\;");
     system(order);
     //修改所有文件时间
     memset(order,0,100);
@@ -115,7 +115,7 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     strcat(order," -type f -exec touch -r ");
     strcat(order,constcpathfrom);
     strcat(order," {} \\");
-    system(order);
+    system(order);*/
 
     delete order;
 }

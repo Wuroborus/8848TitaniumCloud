@@ -58,6 +58,9 @@ void Dialog_restore::on_pushButton_5_clicked()
         ui->label_2->setStyleSheet("color:red");
         return;
     }
+    else{
+        ui->label_2->setStyleSheet("color:#f0f0f0");
+    }
 
     char* order = new char[100];
     strcpy(order,"cp -a ");
@@ -65,7 +68,7 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order," ");
     strcat(order,constcpathto);
     system(order);
-    //修改所有文件夹时间
+   /* //修改所有文件夹时间
     memset(order,0,100);
     strcpy(order,"find ");
     strcat(order,constcpathto);
@@ -80,7 +83,7 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order," -type f -exec touch -r ");
     strcat(order,constcpathfrom);
     strcat(order," {} \\");
-    system(order);
+    system(order);*/
     
     
 

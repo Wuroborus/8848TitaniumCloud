@@ -27,7 +27,7 @@ void MainWindow::on_pushButton_2_clicked()//还原界面
     dialog_restore->show();
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_pushButton_3_clicked()//数据对比
 {
     dialog_compare = new Dialog_compare(this);
     dialog_compare->setModal(true);

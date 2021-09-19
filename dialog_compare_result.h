@@ -20,6 +20,8 @@ private slots:
 
     void getresult(char*);
 
+    void on_pushButton_2_clicked();
+
 private:
     Ui::Dialog_compare_result *ui;
 };
