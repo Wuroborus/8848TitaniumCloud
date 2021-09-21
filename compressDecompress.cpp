@@ -1,26 +1,24 @@
-#include <Python.h>
+#include "compressDecompress.h"
 #include <iostream>
 
 /**
  * sudo apt install python-dev
- * how to compile:
- * g++ fakefake.cpp -g -o my_python -I/usr/include/python2.7/ -L/usr/lib/python2.7 -lpython2.7
- * 
+ *
  * where to change:
  * 1. import module
  * 2. import function
  * 3. arguments
  **/
 
-int main()
-{
-    int res = 3;
-
+bool compressDecompress::compress() {
+    
+    int res = 0;
+    
     Py_Initialize();
     
     /****************** don't delete"*********************/
     PyRun_SimpleString("import sys");
-    PyRun_SimpleString("sys.path.append('./')");
+    PyRun_SimpleString("sys.path.append('../mingyu')");
     /****************** don't delete"*********************/
 
     PyObject *pModule, *pFunc, *pArgs, *pValue;

@@ -35,6 +35,8 @@ private slots:
 
     void getpackname(QString);
 
+    void on_checkBox_2_stateChanged(int arg1);
+
 private:
     Ui::Dialog_backup *ui;
     Dialog_password* dialog_password;
@@ -43,6 +45,8 @@ private:
     QString filePathTo;
     QString Password;
     QString Packname;
+
+    bool isCompress = false;
 };
 
 #endif // DIALOG_BACKUP_H

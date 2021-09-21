@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include "compressDecompress.h"
+
 
 Dialog_backup::Dialog_backup(QWidget *parent) :
     QDialog(parent),
@@ -118,6 +120,12 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     system(order);*/
 
     delete order;
+    
+    if(isCompress) {
+        // compress
+        compressDecompress compressBackup;
+        compressBackup.compress();
+    }
 }
 
 void Dialog_backup::getpackname(QString packname)
@@ -133,5 +141,16 @@ void Dialog_backup::on_checkBox_stateChanged(int arg1)//打包包名
         dialog_packname->setModal(true);
         QObject::connect(dialog_packname,SIGNAL(sendpackname(QString)),this,SLOT(getpackname(QString)));
         dialog_packname->show();
+    }
+}
+
+void Dialog_backup::on_checkBox_2_stateChanged(int arg1)
+{
+    if(arg1)
+    {
+        isCompress = true;
+    }
+    else {
+        isCompress = false;
     }
 }
