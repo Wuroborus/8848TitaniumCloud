@@ -126,6 +126,10 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         compressDecompress compressBackup;
         compressBackup.compress();
     }
+
+    dialog_success = new Dialog_success(this);
+    dialog_success->setModal(true);
+    dialog_success->show();
 }
 
 void Dialog_backup::getpackname(QString packname)

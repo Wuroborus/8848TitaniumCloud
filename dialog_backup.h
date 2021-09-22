@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <dialog_password.h>
 #include <dialog_packname.h>
+#include <dialog_success.h>
 
 namespace Ui {
 class Dialog_backup;
@@ -41,6 +42,7 @@ private:
     Ui::Dialog_backup *ui;
     Dialog_password* dialog_password;
     Dialog_packname* dialog_packname;
+    Dialog_success* dialog_success;
     QString filePathFrom;
     QString filePathTo;
     QString Password;
