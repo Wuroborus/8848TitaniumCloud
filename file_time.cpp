@@ -60,12 +60,12 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
     char* filename = new char[100];
     struct file_stats* next = LinkHeadFrom->next;
 
-    char base[500];
+    char base[1000];
     char* changeorder = new char[100];
     if ((dir=opendir(basePath)) == NULL)
     {
         //perror("  ");
-       return;
+       return ;
     }
     while ((ptr=readdir(dir)) != NULL)
     {
@@ -83,7 +83,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
        strcat(changeorder,ptr->d_name);
        system(changeorder);
        //if(next->next != NULL)
-        //   next = next->next;
+          next = next->next;
        if(ptr->d_type == 4){
            memset(base,'\0',sizeof(base));
            strcpy(base,basePath);
