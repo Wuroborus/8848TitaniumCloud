@@ -1,4 +1,6 @@
 #include "file_time.h"
+#include <time.h>
+#include<stdlib.h>
 
 file_time::file_time()
 {
@@ -21,7 +23,7 @@ void file_time::gotfiletime(char * basePath)
     char base[1000];
     if ((dir=opendir(basePath)) == NULL)
     {
-       //perror("Open dir error...");
+       perror("Open dir error...");
        return;
     }
     while ((ptr=readdir(dir)) != NULL)
@@ -64,8 +66,8 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
     char* changeorder = new char[100];
     if ((dir=opendir(basePath)) == NULL)
     {
-        //perror("  ");
-       return ;
+       perror("Open dir error...");
+       return;
     }
     while ((ptr=readdir(dir)) != NULL)
     {
@@ -75,6 +77,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
        memset(changeorder,0,100);
        strcpy(changeorder,"touch -a -t ");
        char* f_time = new char[20];
+//       ltoa(next->f_stat->st_atime,f_time,20);
        sprintf(f_time,"%l",next->f_stat->st_atime);
        strcat(changeorder,f_time);
        strcat(changeorder," ");
@@ -82,8 +85,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
        strcat(changeorder,"/");
        strcat(changeorder,ptr->d_name);
        system(changeorder);
-       //if(next->next != NULL)
-          next = next->next;
+       next = next->next;
        if(ptr->d_type == 4){
            memset(base,'\0',sizeof(base));
            strcpy(base,basePath);
