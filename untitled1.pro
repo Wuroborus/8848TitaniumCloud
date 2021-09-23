@@ -25,8 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 #**********************************************
-INCLUDEPATH += /usr/include/python2.7
-LIBS += -lpython2.7
+#INCLUDEPATH += /usr/include/python2.7
+#LIBS += -lpython2.7
 #**********************************************
 
 SOURCES += \
@@ -39,7 +39,8 @@ SOURCES += \
     dialog_pwfordecrypt.cpp \
     dialog_compare.cpp \
     dialog_compare_result.cpp \
-    compressDecompress.cpp
+    dialog_success.cpp \
+    file_time.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,7 +51,8 @@ HEADERS += \
     dialog_pwfordecrypt.h \
     dialog_compare.h \
     dialog_compare_result.h \
-    compressDecompress.h
+    dialog_success.h \
+    file_time.h
 
 FORMS += \
         mainwindow.ui \
@@ -60,7 +62,8 @@ FORMS += \
     dialog_packname.ui \
     dialog_pwfordecrypt.ui \
     dialog_compare.ui \
-    dialog_compare_result.ui
+    dialog_compare_result.ui \
+    dialog_success.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -68,7 +71,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    fake.py \
-    test.py\
 
 

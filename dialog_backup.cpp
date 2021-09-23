@@ -6,8 +6,6 @@
 #include <dirent.h>
 #include <file_time.h>
 
-#include "compressDecompress.h"
-
 
 Dialog_backup::Dialog_backup(QWidget *parent) :
     QDialog(parent),
@@ -107,20 +105,18 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
 
     delete order;
     
-    file_stats* statsForFrom;
-    char* cpathfrom;
-    file_time GotFromtime;
-    strcpy(cpathfrom,constcpathfrom);
-    GotFromtime.gotfiletime(cpathfrom);
-    statsForFrom = GotFromtime.getfile_stats();
-    char* cpathto;
-    strcpy(cpathto,constcpathto);
-    GotFromtime.changefiletime(cpathto,statsForFrom);
+//    file_stats* statsForFrom;
+//    char* cpathfrom;
+//    file_time GotFromtime;
+//    strcpy(cpathfrom,constcpathfrom);
+//    GotFromtime.gotfiletime(cpathfrom);
+//    statsForFrom = GotFromtime.getfile_stats();
+//    char* cpathto;
+//    strcpy(cpathto,constcpathto);
+//    GotFromtime.changefiletime(cpathto,statsForFrom);
 
     if(isCompress) {
         // compress
-        compressDecompress compressBackup;
-        compressBackup.compress();
     }
 
     dialog_success = new Dialog_success(this);

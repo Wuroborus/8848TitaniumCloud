@@ -106,7 +106,8 @@ void file_time::changefiletime(char *basePath, file_stats *first)
            memset(changeorder,0,100);
            strcpy(changeorder,"touch -a -t ");
            char* f_time = new char[20];
-           ltoa(next->f_stat->st_atime,f_time,20);
+//           ltoa(next->f_stat->st_atime,f_time,20);
+           sprintf(f_time,"%l",next->f_stat->st_atim);
            strcat(changeorder,f_time);
            strcat(changeorder," ");
            strcat(changeorder,basePath);
@@ -120,7 +121,8 @@ void file_time::changefiletime(char *basePath, file_stats *first)
            memset(changeorder,0,100);
            strcpy(changeorder,"touch -a -t ");
            char* f_time = new char[20];
-           ltoa(next->f_stat->st_atime,f_time,20);
+//           ltoa(next->f_stat->st_atime,f_time,20);
+           sprintf(f_time,"%l",next->f_stat->st_atim);
            strcat(changeorder,f_time);
            strcat(changeorder," ");
            strcat(changeorder,basePath);
@@ -134,7 +136,8 @@ void file_time::changefiletime(char *basePath, file_stats *first)
            memset(changeorder,0,100);
            strcpy(changeorder,"touch -a -t ");
            char* f_time = new char[20];
-           ltoa(next->f_stat->st_atime,f_time,20);
+//           ltoa(next->f_stat->st_atime,f_time,20);
+           sprintf(f_time,"%l",next->f_stat->st_atim);
            strcat(changeorder,f_time);
            strcat(changeorder," ");
            strcat(changeorder,basePath);

@@ -15,13 +15,13 @@ struct file_stats
     file_stats* next;
 };
 
-file_stats* first;
-file_stats* tail;
+
 
 class file_time
 {
 private:
-
+    file_stats* first;
+    file_stats* tail;
 public:
     file_time();
     void gotfiletime(char*);
