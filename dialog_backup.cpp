@@ -4,6 +4,7 @@
 #include "QDebug"
 #include <sys/types.h>
 #include <dirent.h>
+#include <file_time.h>
 
 #include "compressDecompress.h"
 
@@ -96,31 +97,26 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     strcat(order,named);
     system(order);
 
+
     memset(order,0,100);
     strcpy(order,"cp -a ");
     strcat(order,constcpathfrom);
     strcat(order," ");
     strcat(order,named);
     system(order);
-   /* //修改所有目录时间
-    memset(order,0,100);
-    strcpy(order,"find ");
-    strcat(order,named);
-    strcat(order," -exec touch -r ");
-    strcat(order,constcpathfrom);
-    strcat(order," {} \\;");
-    system(order);
-    //修改所有文件时间
-    memset(order,0,100);
-    strcpy(order,"find ");
-    strcat(order,constcpathto);
-    strcat(order," -type f -exec touch -r ");
-    strcat(order,constcpathfrom);
-    strcat(order," {} \\");
-    system(order);*/
 
     delete order;
     
+    file_stats* statsForFrom;
+    char* cpathfrom;
+    file_time GotFromtime;
+    strcpy(cpathfrom,constcpathfrom);
+    GotFromtime.gotfiletime(cpathfrom);
+    statsForFrom = GotFromtime.getfile_stats();
+    char* cpathto;
+    strcpy(cpathto,constcpathto);
+    GotFromtime.changefiletime(cpathto,statsForFrom);
+
     if(isCompress) {
         // compress
         compressDecompress compressBackup;
