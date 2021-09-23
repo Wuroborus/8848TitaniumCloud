@@ -60,7 +60,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
     char* filename = new char[100];
     struct file_stats* next = LinkHeadFrom->next;
 
-    char base[1000];
+    char base[500];
     char* changeorder = new char[100];
     if ((dir=opendir(basePath)) == NULL)
     {
@@ -82,7 +82,8 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
        strcat(changeorder,"/");
        strcat(changeorder,ptr->d_name);
        system(changeorder);
-       next = next->next;
+       if(next->next != NULL)
+           next = next->next;
        if(ptr->d_type == 4){
            memset(base,'\0',sizeof(base));
            strcpy(base,basePath);
