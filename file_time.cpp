@@ -24,7 +24,7 @@ void file_time::gotfiletime(char * basePath)
     if ((dir=opendir(basePath)) == NULL)
     {
        perror("Open dir error...");
-       exit(1);
+       return;
     }
     while ((ptr=readdir(dir)) != NULL)
     {
@@ -67,7 +67,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
     if ((dir=opendir(basePath)) == NULL)
     {
        perror("Open dir error...");
-       exit(1);
+       return;
     }
     while ((ptr=readdir(dir)) != NULL)
     {

@@ -104,15 +104,15 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     system(order);
 
     delete order;
-    
+
+    file_time GotFromtime;
     file_stats* statsForFrom;
     char* cpathfrom;
-    file_time GotFromtime;
+    char* cpathto;
     strcpy(cpathfrom,constcpathfrom);
+    strcpy(cpathto,constcpathto);
     GotFromtime.gotfiletime(cpathfrom);
     statsForFrom = GotFromtime.getfile_stats();
-    char* cpathto;
-    strcpy(cpathto,constcpathto);
     GotFromtime.changefiletime(cpathto,statsForFrom);
 
     if(isCompress) {
