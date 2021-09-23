@@ -85,7 +85,7 @@ void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
        strcat(changeorder,"/");
        strcat(changeorder,ptr->d_name);
        system(changeorder);
-       next = next->next;
+       //next = next->next;
        if(ptr->d_type == 4){
            memset(base,'\0',sizeof(base));
            strcpy(base,basePath);
