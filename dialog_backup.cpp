@@ -86,7 +86,6 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         else {
             break;
         }
-
     }
 
     char* order = new char[100];
@@ -104,16 +103,12 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     system(order);
 
     delete order;
-//first change
-    file_time* GotFromtime = new file_time;
-    file_stats* statsForFrom;
-    char* cpathfrom;
-    char* cpathto;
-    strcpy(cpathfrom,constcpathfrom);
-    strcpy(cpathto,constcpathto);
-    GotFromtime->gotfiletime(cpathfrom);
-    statsForFrom = GotFromtime->getfile_stats();
-    GotFromtime->changefiletime(cpathto,statsForFrom);
+//    file_time* GotFromtime = new file_time;
+//    char* cpathfrom;
+//    char* cpathto;
+//    strcpy(cpathfrom,constcpathfrom);
+//    strcpy(cpathto,constcpathto);
+//    GotFromtime->changefiletime(cpathfrom,cpathto);
 
     if(isCompress) {
         // compress

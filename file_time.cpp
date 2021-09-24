@@ -7,93 +7,67 @@ file_time::file_time()
 
 }
 
-void file_time::gotfiletime(char * basePath)
+void file_time::changefiletime(char *basePathFrom, char *basePathTo)
 {
-    if(first == NULL)
-    {
-        first = new file_stats;
-        tail = first;
-    }
-    else
-    {
-    DIR *dir;
-    struct dirent *ptr;
+    DIR *dirfrom, *dirto;
+    struct dirent *ptrfrom,*ptrto;
     char* filename = new char[100];
-    struct file_stats* next = new file_stats;
-    char base[1000];
-    if ((dir=opendir(basePath)) == NULL)
+
+    char basef[500],baset[500];
+    char* changeorder = new char[1000];
+    if ((dirfrom=opendir(basePathFrom)) == NULL || (dirto = opendir(basePathTo)) == NULL)
     {
        perror("Open dir error...");
        return;
     }
-    while ((ptr=readdir(dir)) != NULL)
+    while (1)
     {
-       if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)    ///current dir OR parrent dir
-          continue;
-       strcpy(filename,basePath);
-       strcat(filename,"/");
-       strcat(filename,ptr->d_name);
-       stat(filename,next->f_stat);
-       tail->next = next;
-       tail = next;
-       tail->next = NULL;
-       if(ptr->d_type == 4){
-           memset(base,'\0',sizeof(base));
-           strcpy(base,basePath);
-           strcat(base,"/");
-           strcat(base,ptr->d_name);
-           gotfiletime(base);
+        //(ptr=readdir(dir)) != NULL
+        if((ptrfrom = readdir(dirfrom)) == NULL || (ptrto = readdir(dirto)) == NULL)
+        {
+            if((ptrfrom = readdir(dirfrom)) != NULL || (ptrto = readdir(dirto)) != NULL)
+            {
+                perror("files not match or can't read dir...");
+                return;
+            }
+            break;
         }
-    }
-    closedir(dir);
-    return ;
-    }
-}
-
-file_stats* file_time::getfile_stats()
-{
-    return first;
-}
-
-void file_time::changefiletime(char *basePath, file_stats *LinkHeadFrom)
-{
-    DIR *dir;
-    struct dirent *ptr;
-    char* filename = new char[100];
-    struct file_stats* next = LinkHeadFrom->next;
-
-    char base[1000];
-    char* changeorder = new char[100];
-    if ((dir=opendir(basePath)) == NULL)
-    {
-       perror("Open dir error...");
-       return;
-    }
-    while ((ptr=readdir(dir)) != NULL)
-    {
-       if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)    ///current dir OR parrent dir
+       if(strcmp(ptrfrom->d_name,".")==0 || strcmp(ptrfrom->d_name,"..")==0)    ///current dir OR parrent dir
           continue;
 
        memset(changeorder,0,100);
-       strcpy(changeorder,"touch -a -t ");
+       strcpy(changeorder,"touch -r ");
        char* f_time = new char[20];
 //       ltoa(next->f_stat->st_atime,f_time,20);
-       sprintf(f_time,"%l",next->f_stat->st_atime);
-       strcat(changeorder,f_time);
+//       strcat(changeorder,f_time);
+//       strcat(changeorder," ");
+       strcat(changeorder,basePathFrom);
        strcat(changeorder," ");
-       strcat(changeorder,basePath);
-       strcat(changeorder,"/");
-       strcat(changeorder,ptr->d_name);
+       strcat(changeorder,basePathTo);
        system(changeorder);
        //next = next->next;
-       if(ptr->d_type == 4){
-           memset(base,'\0',sizeof(base));
-           strcpy(base,basePath);
-           strcat(base,"/");
-           strcat(base,ptr->d_name);
-           changefiletime(base,next);
+       if(ptrfrom->d_type == 4){
+           memset(basef,'\0',sizeof(basef));
+           strcpy(basef,basePathFrom);
+           strcat(basef,"/");
+           strcat(basef,ptrfrom->d_name);
+           memset(baset,'\0',sizeof(baset));
+           strcpy(baset,basePathFrom);
+           strcat(baset,"/");
+           strcat(baset,ptrto->d_name);
+           changefiletime(basef,baset);
         }
     }
-    closedir(dir);
+    closedir(dirfrom);
+    closedir(dirto);
     return ;
 }
+
+//在需改时间处添加代码：
+//    file_time* GotFromtime = new file_time;
+//    char* cpathfrom;
+//    char* cpathto;
+//    strcpy(cpathfrom,constcpathfrom);
+//    strcpy(cpathto,constcpathto);
+//    GotFromtime->changefiletime(cpathfrom,cpathto);
+

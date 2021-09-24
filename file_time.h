@@ -9,24 +9,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-struct file_stats
-{
-    struct stat* f_stat;
-    file_stats* next;
-};
-
-
 
 class file_time
 {
 private:
-    file_stats* first;
-    file_stats* tail;
+
 public:
     file_time();
-    void gotfiletime(char*);
-    void changefiletime(char*,file_stats*);
-    file_stats* getfile_stats();
+    void changefiletime(char*,char*);
 };
 
 #endif // FILE_TIME_H
