@@ -49,6 +49,7 @@ private:
     QString Packname;
 
     bool isCompress = false;
+    bool isPack = false;
 };
 
 #endif // DIALOG_BACKUP_H

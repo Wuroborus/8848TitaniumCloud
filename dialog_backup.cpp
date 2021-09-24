@@ -4,7 +4,10 @@
 #include "QDebug"
 #include <sys/types.h>
 #include <dirent.h>
+#include <stdlib.h>
 #include <file_time.h>
+
+#include "packUnpack.h"
 
 
 Dialog_backup::Dialog_backup(QWidget *parent) :
@@ -102,7 +105,7 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     strcat(order,named);
     system(order);
 
-    delete order;
+    //delete order;
 //    file_time* GotFromtime = new file_time;
 //    char* cpathfrom;
 //    char* cpathto;
@@ -112,6 +115,29 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
 
     if(isCompress) {
         // compress
+    }
+
+    if(isPack) {
+        // pack
+        DIR *dir;
+        struct dirent *ptr;
+        dir = opendir(named);
+        ptr = readdir(dir);
+        strcat(named,ptr->d_name);
+        if(Packname == ""){
+            packUnpack packUnpack_o;
+            packUnpack_o.pack(named,ptr->d_name);
+        }
+        else
+        {
+            packUnpack packUnpack_o;
+            packUnpack_o.pack(named,Packname.toStdString());
+        }
+        closedir(dir);
+        strcpy(order,"rm -rf ");
+        strcat(order,named);
+        system(order);
+
     }
 
     dialog_success = new Dialog_success(this);
@@ -128,10 +154,14 @@ void Dialog_backup::on_checkBox_stateChanged(int arg1)//打包包名
 {
     if(arg1)
     {
+        isPack = true;
         dialog_packname = new Dialog_packname(this);
         dialog_packname->setModal(true);
         QObject::connect(dialog_packname,SIGNAL(sendpackname(QString)),this,SLOT(getpackname(QString)));
         dialog_packname->show();
+    }
+    else {
+        isPack = false;
     }
 }
 

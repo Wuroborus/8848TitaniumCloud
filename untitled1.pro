@@ -40,7 +40,8 @@ SOURCES += \
     dialog_compare.cpp \
     dialog_compare_result.cpp \
     dialog_success.cpp \
-    file_time.cpp
+    file_time.cpp \
+    packUnpack.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +53,8 @@ HEADERS += \
     dialog_compare.h \
     dialog_compare_result.h \
     dialog_success.h \
-    file_time.h
+    file_time.h \
+    packUnpack.h
 
 FORMS += \
         mainwindow.ui \
