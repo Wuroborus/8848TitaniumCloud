@@ -42,8 +42,12 @@ void file_time::changefiletime(char *basePathFrom, char *basePathTo)
 //       strcat(changeorder,f_time);
 //       strcat(changeorder," ");
        strcat(changeorder,basePathFrom);
+       strcat(changeorder,"/");
+       strcat(changeorder,ptrfrom->d_name);
        strcat(changeorder," ");
        strcat(changeorder,basePathTo);
+       strcat(changeorder,"/");
+       strcat(changeorder,ptrto->d_name);
        system(changeorder);
        //next = next->next;
        if(ptrfrom->d_type == 4){
