@@ -38,8 +38,7 @@ void NodeList::insertlist(const unsigned char& Data) //尾插入；
 }
 void NodeList::run(const char* inFilename)
 {
-    FILE* fo;
-    fo=fopen( inFilename, "rb");                        //读入待压缩文件  读取二进制文件
+    FILE* fo = fopen( inFilename, "rb");                        //读入待压缩文件  读取二进制文件
     if (fo == NULL) {
         cerr << " Can not open！" << endl;
         exit(1);
@@ -209,8 +208,59 @@ void HuffmanTree::writeLeafToFile(const int& num, FILE* fw) {
     writeLeafToFile(arrayTree[num].rchild, fw);
 }
 
-/*压缩文件*/
-bool compressFile(const char* sourceFilename,const char* geneFilename) {
+/*由信息构建Huffman树 解压时需要*/
+void HuffmanTree::reBuildHuffmanTree(const unsigned char* str, const int* arr, int i) {
+    if (str[strIndex] != '\0') {
+        if (str[strIndex] == '1') {                                           //判断它是子节点
+            strIndex++;
+            int m = nodeIndex;
+            int n = nodeIndex + 1;
+            arrayTree[i].lchild = m;                                       //定义其左节点
+            arrayTree[i].rchild = n;                                        //定义其右节点
+            arrayTree[m].parent = arrayTree[n].parent = i;  //左右节点的根节点
+            nodeIndex += 2;
+            arrayTree[i].it = NULL;                                        //将父节点的信息设为空
+
+            reBuildHuffmanTree(str, arr, m);
+            reBuildHuffmanTree(str, arr, n);
+        }
+        else {                                                                      //判断它为叶节点
+            strIndex++;
+            arrayTree[i].it = arr[leafArrIndex];                     //写入其字符信息
+            leafArrIndex++;
+            return;
+        }
+    }
+    else return;
+}
+void HuffmanTree::compare(unsigned char* Value,char* decToBinChar,int num) {
+    if (arrayTree[num].lchild == -1) {          // 根据其为满二叉树的特性只判断左子树即可
+        Value[0]=arrayTree[num].it;
+        Value[1] = '\0';
+        return;
+    }
+    if (decToBinChar[0] == '\0') { Value[1] = '0'; return; }
+    else if (decToBinChar[0] == '0') {
+        int i = 0;
+        while (decToBinChar[i] != '\0') {
+            decToBinChar[i] = decToBinChar[i + 1];
+            i++;
+        }
+        compare(Value,decToBinChar, arrayTree[num].lchild);
+    }
+    else{
+        int i = 0;
+        while (decToBinChar[i] != '\0') {
+            decToBinChar[i] = decToBinChar[i + 1];
+            i++;
+        }
+        compare(Value,decToBinChar, arrayTree[num].rchild);
+    }
+};
+
+bool compress(const char* sourceFilename, const char* geneFilename)
+{
+//    compress one file
     NodeList list;
     list.run(sourceFilename);
     length = list.size();
@@ -224,7 +274,6 @@ bool compressFile(const char* sourceFilename,const char* geneFilename) {
     FILE* fw;
     fw=fopen( geneFilename, "ab");
     if (fo == NULL || fw == NULL) {
-//        cout << "文件打开失败!" << endl;
         return false;
     }
     fprintf(fw,"%d",EOF);
@@ -277,63 +326,31 @@ bool compressFile(const char* sourceFilename,const char* geneFilename) {
     }
     fclose(fw);
     fclose(fo);
-//    cout << "压缩完成!" << endl;
-return true;
+    return true;
 }
 
+bool com_uncompress::compressFile(const char *path)
+{
+    string files[100];
+    fileSystem fileManager;
+    int n = 0;
+    fileManager.getAllFiles(path, &n, files);
+    for(int i = 0; i < n; i++)
+    {
+        char* newFile = new char[200];
+        strcpy(newFile, files[i].c_str());
+        strcat(newFile, ".8848com");
+        fopen(newFile, "w");
+        compress(files[i].c_str(), newFile);
 
-/*由信息构建Huffman树 解压时需要*/
-void HuffmanTree::reBuildHuffmanTree(const unsigned char* str, const int* arr, int i) {
-    if (str[strIndex] != '\0') {
-        if (str[strIndex] == '1') {                                           //判断它是子节点
-            strIndex++;
-            int m = nodeIndex;
-            int n = nodeIndex + 1;
-            arrayTree[i].lchild = m;                                       //定义其左节点
-            arrayTree[i].rchild = n;                                        //定义其右节点
-            arrayTree[m].parent = arrayTree[n].parent = i;  //左右节点的根节点
-            nodeIndex += 2;
-            arrayTree[i].it = NULL;                                        //将父节点的信息设为空
-
-            reBuildHuffmanTree(str, arr, m);
-            reBuildHuffmanTree(str, arr, n);
-        }
-        else {                                                                      //判断它为叶节点
-            strIndex++;
-            arrayTree[i].it = arr[leafArrIndex];                     //写入其字符信息
-            leafArrIndex++;
-            return;
-        }
+        char*order = new char[50];
+        strcpy(order,"rm -rf ");
+        strcat(order,files[i].c_str());
+        system(order);
     }
-    else return;
 }
-void HuffmanTree::compare(unsigned char* Value,char* decToBinChar,int num) {
-    if (arrayTree[num].lchild == -1) {          // 根据其为满二叉树的特性只判断左子树即可
-        Value[0]=arrayTree[num].it;
-        Value[1] = '\0';
-        return;
-    }
-    if (decToBinChar[0] == '\0') { Value[1] = '0'; return; }
-    else if (decToBinChar[0] == '0') {
-        int i = 0;
-        while (decToBinChar[i] != '\0') {
-            decToBinChar[i] = decToBinChar[i + 1];
-            i++;
-        }
-        compare(Value,decToBinChar, arrayTree[num].lchild);
-    }
-    else{
-        int i = 0;
-        while (decToBinChar[i] != '\0') {
-            decToBinChar[i] = decToBinChar[i + 1];
-            i++;
-        }
-        compare(Value,decToBinChar, arrayTree[num].rchild);
-    }
-};
 
-/*解压文件*/
-bool uncompressFile(const char* geneFilename,const char* backFilename) {                                    //从树信息文件读取的所有结点个数
+bool com_uncompress::uncompressFile(const char* geneFilename,const char* backFilename) {                                    //从树信息文件读取的所有结点个数
 
     FILE* fr;
     fr=fopen( geneFilename, "rb");

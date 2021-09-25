@@ -5,6 +5,7 @@
 #include <bitset> //输出二进制的头文件
 #include<limits>
 #include<string>
+#include <filesystem.h>
 using namespace std;
 
 /*Huffman结点*/
@@ -31,8 +32,8 @@ struct Node                   //生成一个类链表，存放非重复字节的
 };
 class NodeList
 {
-    Node* head;
 private:
+    Node* head;
     int len=0;
 public:
     NodeList() { head = NULL; }
@@ -77,9 +78,10 @@ public:                  //非重复字符个数
     void writeCodeToFile(const char*);                           //将Huffman树存储到树信息文件中
     void compare(unsigned char*,char*,int);
 };
+
 class com_uncompress{
 public:
-    bool compressFile(const char* sourceFilename,const char* geneFilename);
+    bool compressFile(const char* path);
     bool uncompressFile(const char* geneFilename,const char* backFilename);
 };
 

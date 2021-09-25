@@ -41,7 +41,10 @@ SOURCES += \
     dialog_compare_result.cpp \
     dialog_success.cpp \
     file_time.cpp \
-    packUnpack.cpp
+    packUnpack.cpp \
+    huffman.cpp \
+    filesystem.cpp \
+    lock_unlock.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +57,10 @@ HEADERS += \
     dialog_compare_result.h \
     dialog_success.h \
     file_time.h \
-    packUnpack.h
+    packUnpack.h \
+    huffman.h \
+    filesystem.h \
+    lock_unlock.h
 
 FORMS += \
         mainwindow.ui \

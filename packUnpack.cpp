@@ -15,13 +15,49 @@ struct FileInfo
     int fileNameSize;  //文件名字大小
     int fileOffset;    //文件的偏移量
     int fileSize;    //文件的大小
-    char fileName[20];  //文件名
+    char fileName[200];  //文件名
 };
+
+
+void Opendir(const char* path, int *n, string *str)
+{
+    struct dirent* filename;
+    DIR* dir = opendir(path);
+    while((filename = readdir(dir))!= NULL)
+    {
+        // get rid of "." and ".."
+        if( strcmp( filename->d_name , "." ) == 0 ||
+            strcmp( filename->d_name , "..") == 0    )
+            continue;
+        (*n)++;
+        // cout<<filename ->d_name <<endl;
+
+
+        //*(str + (*n - 1))=filename->d_name;
+
+        char* fileName;
+        strcpy(fileName, path);
+        strcat(fileName, "/");
+        strcat(fileName, filename->d_name);
+        *(str + (*n - 1)) = fileName;
+        // store the relative path
+        if(filename->d_type == 4)
+        {
+            // dir
+            char* subpath;
+            strcpy(subpath, path);
+            strcat(subpath, "/");
+            strcat(subpath, filename->d_name);
+            Opendir(subpath, n, str);
+        }
+    }
+}
+
 /* Show all files under dir_name , do not show directories ! */
 int showAllFiles( const char * dir_name,string *str )
 {
     // check the parameter !
-    if( NULL == dir_name )
+    if( dir_name == NULL )
     {
 //        cout<<" dir_name is null ! "<<endl;
         return 0;
@@ -35,28 +71,9 @@ int showAllFiles( const char * dir_name,string *str )
 //        cout<<"dir_name is not a valid directory !"<<endl;
         return 0;
     }
-
-    struct dirent * filename;    // return value for readdir()
-    DIR * dir;                   // return value for opendir()
-    dir = opendir( dir_name );
-    if( NULL == dir )
-    {
-//        cout<<"Can not open dir "<<dir_name<<endl;
-        return 0;
-    }
-//    cout<<"Successfully opened the dir !"<<endl;
    int n=0;
     /* read all the files in the dir ~ */
-    while( ( filename = readdir(dir) ) != NULL )
-    {   n=n++;
-        // get rid of "." and ".."
-        if( strcmp( filename->d_name , "." ) == 0 ||
-            strcmp( filename->d_name , "..") == 0    )
-            continue;
-        cout<<filename ->d_name <<endl;
-        str[n-1]=filename->d_name;
-
-    }
+    Opendir(dir_name, &n, str);
     return n;
 }
 
@@ -115,9 +132,9 @@ bool packUnpack::pack(const char *path,string s2)
     }
     //写文件
     char ch;
-    for (int i = 0; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
-        while (ch = file[i].get(),!file[i].eof())
+        while ((ch = file[i].get()) != file[i].eof())
         {
             outfile.put(ch);
         }

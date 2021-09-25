@@ -50,6 +50,7 @@ private:
 
     bool isCompress = false;
     bool isPack = false;
+    bool isPass = false;
 };
 
 #endif // DIALOG_BACKUP_H

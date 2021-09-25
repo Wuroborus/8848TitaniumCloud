@@ -8,6 +8,8 @@
 #include <file_time.h>
 
 #include "packUnpack.h"
+#include "huffman.h"
+#include "lock_unlock.h"
 
 
 Dialog_backup::Dialog_backup(QWidget *parent) :
@@ -51,6 +53,11 @@ void Dialog_backup::on_checkBox_3_stateChanged(int arg1)
         QObject::connect(dialog_password,SIGNAL(sendpassword(QString)),this,SLOT(getpassword(QString)));
         dialog_password->show();
         //qDebug() << Password;
+
+        isPass = true;
+    }
+    else {
+        isPass = false;
     }
 }
 
@@ -115,6 +122,8 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
 
     if(isCompress) {
         // compress
+        com_uncompress compressManager;
+        compressManager.compressFile(named);
     }
 
     if(isPack) {
@@ -122,8 +131,12 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         DIR *dir;
         struct dirent *ptr;
         dir = opendir(named);
-        ptr = readdir(dir);
-        strcat(named,ptr->d_name);
+
+        // "." is insert
+        // ptr = readdir(dir);
+        // strcat(named,ptr->d_name);
+
+
         if(Packname == ""){
             packUnpack packUnpack_o;
             packUnpack_o.pack(named,ptr->d_name);
@@ -138,6 +151,13 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         strcat(order,named);
         system(order);
 
+    }
+
+    if(isPass) {
+        lock_unlock lockManager;
+        std::string pass = Password.toStdString();
+        char* constcpass = (char*)pass.c_str();
+        lockManager.lock(named, constcpass);
     }
 
     dialog_success = new Dialog_success(this);

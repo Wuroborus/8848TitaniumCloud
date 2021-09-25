@@ -48,9 +48,9 @@ function pass()
 function main() {
     chooseLocalPath();
     
-    compress();
-    pack();
-    pass();
+    compress(); 
+    //pack();
+    //pass();
     
     clickButton(waitForObject(names.dialogBackupPushButton5QPushButton));
 }
