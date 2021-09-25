@@ -3,25 +3,61 @@
 using namespace std;
 #include <fstream>
 #include <string.h>
+#include<iostream>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <stdio.h>
+using namespace std;
+#include <fstream>
+#include <string.h>
 //索引表大小：n  文件数量：n   文件1大小 文件1偏移  文件1名大小 文件1名  文件2.。。
 struct FileInfo
 {
-  int fileNameSize;  //文件名字大小
-  int fileOffset;    //文件的偏移量
-  int fileSize;    //文件的大小
-  char fileName[20];  //文件名
+    int fileNameSize;  //文件名字大小
+    int fileOffset;    //文件的偏移量
+    int fileSize;    //文件的大小
+    char fileName[20];  //文件名
 };
-
+void OpenThedir(const char *path, int *n, string *str)
+{
+    struct dirent* filename;
+    DIR* dir = opendir(path);
+    while((filename = readdir(dir))!= NULL)
+    {
+        // get rid of "." and ".."
+        if( strcmp( filename->d_name , "." ) == 0 ||
+            strcmp( filename->d_name , "..") == 0    )
+            continue;
+        // store the relative path
+        if(filename->d_type == 4)
+        {
+            // dir
+            char* subpath = new char[200];
+            strcpy(subpath, path);
+            strcat(subpath, "/");
+            strcat(subpath, filename->d_name);
+            OpenThedir(subpath, n, str);
+        }
+        else {
+            (*n)++;
+            char* fileName = new char[200];
+            strcpy(fileName, path);
+            strcat(fileName, "/");
+            strcat(fileName, filename->d_name);
+            str[*n - 1] = fileName;
+        }
+    }
+}
 int main()
 {
-    int n;
-    cout<<"文件个数：";
-    cin>>n;
-    string s[n];
+    int n=0;
+    char dir_path[200];  // 文件夹路径
+    cin >> dir_path;
+    string s[20];
+    OpenThedir(dir_path, &n, s);
     FileInfo fileList[n];
     for(int i=0;i<n;i++)
-    {   cout<<"输入路径：";
-        cin>>s[i];
+    {
         fileList[i].fileNameSize=0;
         fileList[i].fileOffset=0;
         fileList[i].fileSize=0;
