@@ -11,7 +11,7 @@ int main()
     cout<<"dir:";
     cin>>fname;
     int n;
-    cout<<"选择 1：打包 2：解包"；
+    cout<<"选择 1：打包 2：解包";
 
     cin>>n;
     if(n==1){
