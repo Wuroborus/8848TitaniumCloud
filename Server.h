@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <cstring>
 
 class Server {
 private:
@@ -30,6 +31,7 @@ public:
     void send_file(std::string path);
     void receive_file(std::string path);
     int make_dirs(const char *dir);
+    void dup_dir(std::string path);
 };
 
 

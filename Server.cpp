@@ -71,6 +71,8 @@ void Server::accept_requests() {
             send_file(buffer + 8);
         } else if (buffer[0] == 'b') {
             receive_file(buffer + 7);
+        } else if (buffer[0] == 'd') {
+            dup_dir(buffer + 7);
         }
     } else {
         perror("[ERROR] : Connecting failed.");
@@ -125,6 +127,21 @@ void Server::receive_file(std::string path) {
     buffer[valread] = '\0';
     fclose(fp);
     std::cout << "[SERVER]: File saved.\n";
+    close(new_socket_descriptor);
+    accept_requests();
+}
+
+void Server::dup_dir(std::string path) {
+    std::string::size_type idx = path.rfind('/', path.length());
+    std::string par_dir = path.substr(0, idx);
+    if (access(("./backup" + par_dir).c_str(), 00) == -1) {
+        std::cout << "[SERVER]: Creating directory.\n";
+        if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
+            std::cout << "[ERROR]: Directory creation failed.\n";
+        }
+    }
+    make_dirs(("./backup" + path).c_str());
+    std::cout << "[SERVER]: Directory created.\n";
     close(new_socket_descriptor);
     accept_requests();
 }

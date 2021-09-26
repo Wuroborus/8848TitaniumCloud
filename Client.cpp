@@ -73,4 +73,3 @@ void Client::receive_file(std::string path) {
     fclose(fp);
     std::cout << "[CLIENT]: File saved.\n";
 }
-
