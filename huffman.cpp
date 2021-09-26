@@ -337,57 +337,143 @@ bool com_uncompress::compressFile(const char *path)
     int n = 0;
     fileManager.getAllFiles(path, &n, files);
     struct stat buf;
+
+    ino_t inos[n]; // store all inos in this directory
+    int fileType[n];
+    nlink_t inlink[n];
+
     for(int i = 0; i < n; i++)
     {
+        lstat(files[i].c_str(), &buf);
+        if(S_ISLNK(buf.st_mode))
+        {
+            // link file
+            char* oldpath = new char[300], * newpath = new char[300];
+            int result = readlink(files[i].c_str(), oldpath, 300);
+            if(result < 0 || result >= 300)
+            {
+                perror("readlink");
+                exit(-1);
+            }
+            else {
+                // todo if oldpath is out of this directory
+                oldpath[result] = '\0';
+                if(oldpath[0] == '/' || oldpath[0] == '.')
+                {
+                    fileType[i] = SYM_OUT;
+                }
+                else {
+                    fileType[i] = SYM_IN;
+                }
+            }
+        }
+
+        int j;
+        for(j = 0; j < i; j++)
+        {
+            if(buf.st_ino == inos[j])
+            {
+                inlink[j]++;
+                inlink[i] = inlink[j];
+                inos[i] = inos[j];
+                break;
+            }
+            else continue;
+        }
+        if(j == i) {
+            inos[j] = buf.st_ino;
+            inlink[j] = 1;
+        }
+
+    }
+    for(int i = 0; i < n; i++) {
+        lstat(files[i].c_str(), &buf);
+        if(inlink[i] == 1 && buf.st_nlink != 1 && !S_ISLNK(buf.st_mode)) {
+            // hard link out of this directory
+            // don't exit
+            fileType[i] = HARD_OUT;
+        }
+        else if(buf.st_nlink == 1 && !S_ISLNK(buf.st_mode)) {
+            fileType[i] = REG_FILE;
+        }
+        else if(!S_ISLNK(buf.st_mode)) {
+            fileType[i] = HARD_IN;
+        }
+
         char* newFile = new char[200];
         strcpy(newFile, files[i].c_str());
         strcat(newFile, ".8848com");
 
-        if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
-        {
-            close(res);
+        char* oldpath = new char[300], * newpath = new char[300];
+
+
+        switch(fileType[i]) {
+            case REG_FILE:
+                if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+                {
+                    close(res);
+                }
+                else {
+                 // todo open error;
+                }
+                compress(files[i].c_str(), newFile);
+                break;
+            case SYM_IN:
+                {
+                    int result = readlink(files[i].c_str(), oldpath, 300);
+                    if(result < 0 || result >= 300)
+                    {
+                        perror("readlink");
+                        exit(-1);
+                    }
+                    strcpy(newpath, oldpath);
+                    strcat(newpath, ".8848com");
+                    symlink(newpath, newFile);
+                    break;
+                }
+            case HARD_IN:
+                int k;
+                for(k = 0; k < n; k++)
+                {
+                    if(inos[k] == inos[i]) break;
+                    else continue;
+                }
+                if(k < i && inlink[k] == 1)
+                {
+//                    new hardlink
+                    lstat(files[i].c_str(), &buf);
+                    char* order = new char[100];
+                    strcpy(order, "ln ");
+                    strcat(order, files[k].c_str());
+                    strcat(order, ".8848com");
+                    strcat(order, " ");
+                    strcat(order, files[i].c_str());
+                    strcat(order, ".8848com");
+                    system(order);
+                    delete order;
+                }
+                else {
+                    if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+                    {
+                        close(res);
+                    }
+                    else {
+                     // todo open error;
+                    }
+                    compress(files[i].c_str(), newFile);
+                    inlink[i] = 1;
+                }
         }
-        else {
-         // todo open error;
-        }
-        compress(files[i].c_str(), newFile);
-
-        // type 2: change link files
-        //*******************************************************
-//        lstat(files[i].c_str(), &buf);
-//        if(S_ISLNK(buf.st_mode)) {
-//            // link file
-//            char* oldpath, * newpath;
-//            int size;
-//            readlink(files[i].c_str(), oldpath, size);
-//            // todo if oldpath is out of this directory
-//            strcpy(newpath, oldpath);
-//            strcat(newpath, ".8848com");
-//            symlink(newpath, newFile);
-//        }
-//        else {
-//            // file
-
-//            if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
-//            {
-//                close(res);
-//            }
-//            else {
-//             // todo open error;
-//            }
-//            compress(files[i].c_str(), newFile);
-//        }
-        //*******************************************************
-
-
     }
-
-    for(int i = 0; i <n; i++)
+    for(int i = 0; i < n; i++)
     {
-        char*order = new char[50];
-        strcpy(order,"rm -rf ");
-        strcat(order,files[i].c_str());
-        system(order);
+        if(fileType[i] != SYM_OUT)
+        {
+            char*order = new char[50];
+            strcpy(order,"rm -rf ");
+            strcat(order,files[i].c_str());
+            system(order);
+        }
     }
 }
 
@@ -492,28 +578,162 @@ bool uncompress(const char* geneFilename,const char* backFilename) {            
 bool com_uncompress::uncompressFile(const char* path)
 {
     string files[100];
+
     fileSystem fileManager;
     int n = 0;
     fileManager.getAllFiles(path, &n, files);
+
+    struct stat buf;
+
+    ino_t inos[n]; // store all inos in this directory
+    int fileType[n];
+    nlink_t inlink[n];
+
     for(int i = 0; i < n; i++)
     {
+        lstat(files[i].c_str(), &buf);
+        if(S_ISLNK(buf.st_mode))
+        {
+            // link file
+            char* oldpath = new char[300], * newpath = new char[300];
+            int result = readlink(files[i].c_str(), oldpath, 300);
+            if(result < 0 || result >= 300)
+            {
+                perror("readlink");
+                exit(-1);
+            }
+            else {
+                // todo if oldpath is out of this directory
+                oldpath[result] = '\0';
+                if(oldpath[0] == '/' || oldpath[0] == '.')
+                {
+                    fileType[i] = SYM_OUT;
+                }
+                else {
+                    fileType[i] = SYM_IN;
+                }
+            }
+        }
+
+        int j;
+        for(j = 0; j < i; j++)
+        {
+            if(buf.st_ino == inos[j])
+            {
+                inlink[j]++;
+                inlink[i] = inlink[j];
+                inos[i] = inos[j];
+                break;
+            }
+            else continue;
+        }
+        if(j == i) {
+            inos[j] = buf.st_ino;
+            inlink[j] = 1;
+        }
+
+    }
+
+    for(int i = 0; i < n; i++) {
+        lstat(files[i].c_str(), &buf);
+        if(inlink[i] == 1 && buf.st_nlink != 1 && !S_ISLNK(buf.st_mode)) {
+            // hard link out of this directory
+            // don't exit
+            fileType[i] = HARD_OUT;
+        }
+        else if(buf.st_nlink == 1 && !S_ISLNK(buf.st_mode)) {
+            fileType[i] = REG_FILE;
+        }
+        else if(!S_ISLNK(buf.st_mode)) {
+            fileType[i] = HARD_IN;
+        }
+
         string suffixStr = files[i].substr(files[i].find_last_of('.') + 1);
         if(!suffixStr.compare("8848com"))
         {
-            // same
             char* newFile = new char[200];
             int length = strlen(files[i].c_str()) - strlen(suffixStr.c_str()) - 1;
             strncpy(newFile, files[i].c_str(), length);
-            *(newFile + length) = '\0';
-            fopen(newFile, "w");
-            uncompress(files[i].c_str(), newFile);
+            newFile[length] = '\0';
+
+            char* oldpath = new char[300], * newpath = new char[300];
+
+
+            switch(fileType[i]) {
+                case REG_FILE:
+                    if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+                    {
+                        close(res);
+                    }
+                    else {
+                     // todo open error;
+                    }
+                    uncompress(files[i].c_str(), newFile);
+                    break;
+                case SYM_IN:
+                    {
+                        int result = readlink(files[i].c_str(), oldpath, 300);
+                        if(result < 0 || result >= 300)
+                        {
+                            perror("readlink");
+                            exit(-1);
+                        }
+
+                        oldpath[result - 1] = '\0';
+
+                        length = strlen(oldpath) - strlen(suffixStr.c_str()) - 1;
+                        strncpy(newpath, oldpath, length);
+                        newpath[length - 1] = '\0';
+                        symlink(newpath, newFile);
+                        break;
+                    }
+                case HARD_IN:
+                    int k;
+                    for(k = 0; k < n; k++)
+                    {
+                        if(inos[k] == inos[i]) break;
+                        else continue;
+                    }
+                    if(k < i && inlink[k] == 1)
+                    {
+    //                    new hardlink
+                        lstat(files[i].c_str(), &buf);
+                        char* order = new char[100];
+                        strcpy(order, "ln ");
+                        length = strlen(files[k].c_str()) - strlen(files[k].substr(files[k].find_last_of('.') + 1).c_str()) - 1;
+                        strncpy(newpath, files[k].c_str(), length);
+                        newpath[length] = '\0';
+                        strcat(order, newpath);
+
+                        strcat(order, " ");
+
+                        length = strlen(files[i].c_str()) - strlen(files[i].substr(files[i].find_last_of('.') + 1).c_str()) - 1;
+                        strncpy(newpath, files[i].c_str(), length);
+                        newpath[length] = '\0';
+                        strcat(order, newpath);
+
+                        system(order);
+                        delete order;
+                    }
+                    else {
+                        if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+                        {
+                            close(res);
+                        }
+                        else {
+                         // todo open error;
+                        }
+                        uncompress(files[i].c_str(), newFile);
+                        inlink[i] = 1;
+                    }
+            }
 
             char*order = new char[50];
             strcpy(order,"rm -rf ");
             strcat(order,files[i].c_str());
             system(order);
-
-            // to
         }
+
     }
+
 }
