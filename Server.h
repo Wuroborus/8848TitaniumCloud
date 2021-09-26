@@ -24,8 +24,9 @@ public:
     void create_socket();
     void bind_socket();
     void set_listen();
-    void accept_connection();
+    void accept_requests();
     void send_file(std::string path);
+    void receive_file(std::string path);
 };
 
 

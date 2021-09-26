@@ -11,7 +11,7 @@ Server::Server() {
 
     bind_socket();
     set_listen();
-    accept_connection();
+    accept_requests();
 }
 
 void Server::create_socket() {
@@ -35,15 +35,25 @@ void Server::set_listen() {
         perror("[ERROR]: Listening failed.");
         exit(EXIT_FAILURE);
     }
-    std::cout << "[SERVER]: Socket in Listen State (Max Connection Queue: 3).\n";
+    std::cout << "[SERVER]: Socket is listening.\n";
 }
 
-void Server::accept_connection() {
-    if ((new_socket_descriptor = accept(general_socket_descriptor, (struct sockaddr *)&address, (socklen_t*)&address_length))<0) {
+void Server::accept_requests() {
+    if ((new_socket_descriptor = accept(general_socket_descriptor, (struct sockaddr *) &address,
+                                        (socklen_t *) &address_length)) >= 0) {
+        std::cout << "[SERVER]: Connection established.\n";
+        char buffer[1024] = {};
+        int valread = read(new_socket_descriptor, buffer, 1024);
+        buffer[valread] = '\0';
+        if (buffer[0] == 'r') {
+            send_file(buffer + 8);
+        } else if (buffer[0] == 'b') {
+            receive_file(buffer + 7);
+        }
+    } else {
         perror("[ERROR] : Connecting failed.");
         exit(EXIT_FAILURE);
     }
-    std::cout << "[SERVER]: Connection established.\n";
 }
 
 void Server::send_file(std::string path) {
@@ -59,7 +69,32 @@ void Server::send_file(std::string path) {
         std::cout << "[SERVER]: Transmitted " << bytes_sent << " Bytes.\n";
 
         std::cout << "[SERVER]: File Transfer Complete.\n";
+        close(new_socket_descriptor);
+        accept_requests();
     } else {
         perror("[ERROR]: File loading failed.");
     }
+}
+
+void Server::receive_file(std::string path) {
+    FILE* fp;
+    if ((fp = fopen(("./backup" + path).c_str(),"wb") ) == nullptr ) {
+        std::cout << "[ERROR]: File creation failed.\n";
+    }
+    std::cout << "[SERVER]: File created.\n";
+    char buffer[1024] = {};
+    int valread;
+    while(true){
+        valread = read(new_socket_descriptor , buffer, 1024);
+        std::cout << "[SERVER]: Received " << valread <<" bytes.\n";
+        if(valread == 0)
+            break;
+        std::cout << "[SERVER]: Saving data to file.\n";
+        fwrite(buffer, 1, valread, fp);
+    }
+    buffer[valread] = '\0';
+    fclose(fp);
+    std::cout << "[SERVER]: File saved.\n";
+    close(new_socket_descriptor);
+    accept_requests();
 }

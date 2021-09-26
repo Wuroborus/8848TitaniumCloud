@@ -22,6 +22,8 @@ public:
     Client(std::string address);
     void create_socket();
     void create_connection();
+    void request_service(std::string service);
+    void send_file(std::string path);
     void receive_file(std::string path);
 };
 
