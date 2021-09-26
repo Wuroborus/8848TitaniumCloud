@@ -336,14 +336,48 @@ bool com_uncompress::compressFile(const char *path)
     fileSystem fileManager;
     int n = 0;
     fileManager.getAllFiles(path, &n, files);
+    struct stat buf;
     for(int i = 0; i < n; i++)
     {
-
         char* newFile = new char[200];
         strcpy(newFile, files[i].c_str());
         strcat(newFile, ".8848com");
-        fopen(newFile, "w");
+
+        if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+        {
+            close(res);
+        }
+        else {
+         // todo open error;
+        }
         compress(files[i].c_str(), newFile);
+
+        // type 2: change link files
+        //*******************************************************
+//        lstat(files[i].c_str(), &buf);
+//        if(S_ISLNK(buf.st_mode)) {
+//            // link file
+//            char* oldpath, * newpath;
+//            int size;
+//            readlink(files[i].c_str(), oldpath, size);
+//            // todo if oldpath is out of this directory
+//            strcpy(newpath, oldpath);
+//            strcat(newpath, ".8848com");
+//            symlink(newpath, newFile);
+//        }
+//        else {
+//            // file
+
+//            if(int res = open(newFile, O_CREAT, S_IRWXU) >= 0)
+//            {
+//                close(res);
+//            }
+//            else {
+//             // todo open error;
+//            }
+//            compress(files[i].c_str(), newFile);
+//        }
+        //*******************************************************
 
 
     }
@@ -468,8 +502,9 @@ bool com_uncompress::uncompressFile(const char* path)
         {
             // same
             char* newFile = new char[200];
-            strncpy(newFile, files[i].c_str(), strlen(files[i].c_str()) - strlen(suffixStr.c_str()) - 1);
-            strcat(newFile, "\0");
+            int length = strlen(files[i].c_str()) - strlen(suffixStr.c_str()) - 1;
+            strncpy(newFile, files[i].c_str(), length);
+            *(newFile + length) = '\0';
             fopen(newFile, "w");
             uncompress(files[i].c_str(), newFile);
 
@@ -477,6 +512,8 @@ bool com_uncompress::uncompressFile(const char* path)
             strcpy(order,"rm -rf ");
             strcat(order,files[i].c_str());
             system(order);
+
+            // to
         }
     }
 }

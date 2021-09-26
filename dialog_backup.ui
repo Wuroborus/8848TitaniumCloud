@@ -39,19 +39,6 @@
     <string>本地备份</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>200</y>
-     <width>121</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>服务器备份 </string>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="checkBox">
    <property name="geometry">
     <rect>
@@ -179,6 +166,19 @@
    </property>
    <property name="text">
     <string>文件路径选择不完整！</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_4">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>220</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>server</string>
    </property>
   </widget>
  </widget>

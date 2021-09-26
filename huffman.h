@@ -4,8 +4,17 @@
 #include <string.h>
 #include <bitset> //输出二进制的头文件
 #include<limits>
-#include<string>
+#include<string.h>
 #include <filesystem.h>
+
+// open file
+#include <sys/stat.h> // check file
+#include <sys/types.h>
+#include <fcntl.h>
+
+// close file
+#include <unistd.h>
+
 using namespace std;
 
 /*Huffman结点*/

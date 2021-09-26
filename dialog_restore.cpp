@@ -3,6 +3,8 @@
 #include "QFileDialog"
 #include<dirent.h>
 
+#include "huffman.h"
+
 
 Dialog_restore::Dialog_restore(QWidget *parent) :
     QDialog(parent),
@@ -89,7 +91,7 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcpy(order,"cp -a ");
     strcat(order,constcpathfrom);
     strcat(order," ");
-    strcat(order,constcpathto);
+    strcat(order,named);
     system(order);
    /* //修改所有文件夹时间
     memset(order,0,100);
@@ -111,4 +113,7 @@ void Dialog_restore::on_pushButton_5_clicked()
     
 
     delete order;
+
+    com_uncompress compressManager;
+    compressManager.uncompressFile(named);
 }

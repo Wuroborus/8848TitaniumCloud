@@ -38,6 +38,8 @@ private slots:
 
     void on_checkBox_2_stateChanged(int arg1);
 
+    void on_checkBox_4_stateChanged(int arg1);
+
 private:
     Ui::Dialog_backup *ui;
     Dialog_password* dialog_password;
@@ -51,6 +53,7 @@ private:
     bool isCompress = false;
     bool isPack = false;
     bool isPass = false;
+    bool isRemote = false;
 };
 
 #endif // DIALOG_BACKUP_H
