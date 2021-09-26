@@ -1,8 +1,7 @@
 #include "dialog_restore.h"
 #include "ui_dialog_restore.h"
 #include "QFileDialog"
-
-#include "huffman.h"
+#include<dirent.h>
 
 
 Dialog_restore::Dialog_restore(QWidget *parent) :
@@ -64,7 +63,29 @@ void Dialog_restore::on_pushButton_5_clicked()
         ui->label_2->setStyleSheet("color:#f0f0f0");
     }
 
+    char* named = new char[50];
+    for(int i = 0;i<=99;i++)
+    {
+        strcpy(named,constcpathto);
+        strcat(named,"/Restore_");
+        strcat(named,std::to_string(i).c_str());
+        if(opendir(named))
+        {
+            memset(named,0,50);
+            continue;
+        }
+        else {
+            break;
+        }
+    }
+
     char* order = new char[100];
+
+    strcpy(order,"mkdir -p ");
+    strcat(order,named);
+    system(order);
+
+    memset(order,0,100);
     strcpy(order,"cp -a ");
     strcat(order,constcpathfrom);
     strcat(order," ");
@@ -90,8 +111,4 @@ void Dialog_restore::on_pushButton_5_clicked()
     
 
     delete order;
-
-    com_uncompress compressManager;
-    compressManager.uncompressFile((char*)pathto.c_str());
-
 }
