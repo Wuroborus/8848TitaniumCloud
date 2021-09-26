@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
     else{
         decode(s1, s2, s_code);//source dest code
     }
-     decode(s1, s2, s_code);//source dest code
+
 
 //    printf("-------------------mmmmmmmmm");
 
