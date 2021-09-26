@@ -332,17 +332,24 @@ bool compress(const char* sourceFilename, const char* geneFilename)
 bool com_uncompress::compressFile(const char *path)
 {
     string files[100];
+
     fileSystem fileManager;
     int n = 0;
     fileManager.getAllFiles(path, &n, files);
     for(int i = 0; i < n; i++)
     {
+
         char* newFile = new char[200];
         strcpy(newFile, files[i].c_str());
         strcat(newFile, ".8848com");
         fopen(newFile, "w");
         compress(files[i].c_str(), newFile);
 
+
+    }
+
+    for(int i = 0; i <n; i++)
+    {
         char*order = new char[50];
         strcpy(order,"rm -rf ");
         strcat(order,files[i].c_str());
@@ -350,7 +357,7 @@ bool com_uncompress::compressFile(const char *path)
     }
 }
 
-bool com_uncompress::uncompressFile(const char* geneFilename,const char* backFilename) {                                    //从树信息文件读取的所有结点个数
+bool uncompress(const char* geneFilename,const char* backFilename) {                                    //从树信息文件读取的所有结点个数
 
     FILE* fr;
     fr=fopen( geneFilename, "rb");
@@ -446,4 +453,30 @@ bool com_uncompress::uncompressFile(const char* geneFilename,const char* backFil
     fclose(fr);
     return true;
 //    cout << "解压完成!" << endl;
+}
+
+bool com_uncompress::uncompressFile(const char* path)
+{
+    string files[100];
+    fileSystem fileManager;
+    int n = 0;
+    fileManager.getAllFiles(path, &n, files);
+    for(int i = 0; i < n; i++)
+    {
+        string suffixStr = files[i].substr(files[i].find_last_of('.') + 1);
+        if(!suffixStr.compare("8848com"))
+        {
+            // same
+            char* newFile = new char[200];
+            strncpy(newFile, files[i].c_str(), strlen(files[i].c_str()) - strlen(suffixStr.c_str()) - 1);
+            strcat(newFile, "\0");
+            fopen(newFile, "w");
+            uncompress(files[i].c_str(), newFile);
+
+            char*order = new char[50];
+            strcpy(order,"rm -rf ");
+            strcat(order,files[i].c_str());
+            system(order);
+        }
+    }
 }

@@ -2,6 +2,8 @@
 #include "ui_dialog_restore.h"
 #include "QFileDialog"
 
+#include "huffman.h"
+
 
 Dialog_restore::Dialog_restore(QWidget *parent) :
     QDialog(parent),
@@ -88,4 +90,8 @@ void Dialog_restore::on_pushButton_5_clicked()
     
 
     delete order;
+
+    com_uncompress compressManager;
+    compressManager.uncompressFile((char*)pathto.c_str());
+
 }

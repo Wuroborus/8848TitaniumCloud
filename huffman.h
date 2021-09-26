@@ -82,7 +82,7 @@ public:                  //非重复字符个数
 class com_uncompress{
 public:
     bool compressFile(const char* path);
-    bool uncompressFile(const char* geneFilename,const char* backFilename);
+    bool uncompressFile(const char* path);
 };
 
 #endif
