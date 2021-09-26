@@ -174,8 +174,8 @@ bool isCoded(char src[]){
 
 
 int main(int argc, char* argv[]) {
-    char s1[32];
-    char s2[32];
+    char s1[200];
+    char s2[200];
     char s_code[32];
     cout<<"文件1：";
     cin>>s1;
