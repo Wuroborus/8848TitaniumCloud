@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <file_time.h>
 
-#include "packUnpack.h"
 #include "huffman.h"
-#include "lock_unlock.h"
+
+#include "Client.h"
 
 
 Dialog_backup::Dialog_backup(QWidget *parent) :
@@ -82,6 +82,9 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         ui->label_2->setStyleSheet("color:#f0f0f0");
     }
 
+    if(!isRemote) {
+
+    }
     char* named = new char[50];
     for(int i = 0;i<=99;i++)
     {
@@ -138,13 +141,13 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
 
 
         if(Packname == ""){
-            packUnpack packUnpack_o;
-            packUnpack_o.pack(named,ptr->d_name);
+//            packUnpack packUnpack_o;
+//            packUnpack_o.pack(named,ptr->d_name);
         }
         else
         {
-            packUnpack packUnpack_o;
-            packUnpack_o.pack(named,Packname.toStdString());
+//            packUnpack packUnpack_o;
+//            packUnpack_o.pack(named,Packname.toStdString());
         }
         closedir(dir);
         strcpy(order,"rm -rf ");
@@ -154,11 +157,27 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     }
 
     if(isPass) {
-        lock_unlock lockManager;
-        std::string pass = Password.toStdString();
-        char* constcpass = (char*)pass.c_str();
-        lockManager.lock(named, constcpass);
+//        lock_unlock lockManager;
+//        std::string pass = Password.toStdString();
+//        char* constcpass = (char*)pass.c_str();
+//        lockManager.lock(named, constcpass);
     }
+
+    // Server
+    if(isRemote) {
+        Client c("127.0.0.1");
+        c.request_service("backup " + pathto);
+
+        fileSystem fileManager;
+        int fileno;
+        string files[100];
+        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
+        for(int i = 0; i < fileno; i++)
+        {
+            c.send_file(files[i]);
+        }
+    }
+
 
     dialog_success = new Dialog_success(this);
     dialog_success->setModal(true);
@@ -193,5 +212,16 @@ void Dialog_backup::on_checkBox_2_stateChanged(int arg1)
     }
     else {
         isCompress = false;
+    }
+}
+
+void Dialog_backup::on_checkBox_4_stateChanged(int arg1)
+{
+    // remote or local
+    if(arg1) {
+        isRemote = true;
+    }
+    else {
+        isRemote = false;
     }
 }
