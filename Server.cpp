@@ -1,5 +1,27 @@
 #include "Server.h"
 
+int Server::make_dirs(const char *dir)
+{
+    if(NULL == dir || '\0' == *dir)
+        return -1;
+
+    const char *p = strrchr(dir, '/');
+    if(p != NULL)
+    {
+        char parent_dir[4096] = { 0 };
+        strncpy(parent_dir, dir, p - dir);
+        if(access(parent_dir, F_OK) != 0)
+            make_dirs(parent_dir);
+    }
+
+    if(access(dir, F_OK) != 0)
+    {
+        if( mkdir(dir, 0777) != 0)
+            return -1;
+    }
+    return 0;
+}
+
 Server::Server() {
     create_socket();
     PORT = 8848;
@@ -77,6 +99,14 @@ void Server::send_file(std::string path) {
 }
 
 void Server::receive_file(std::string path) {
+    std::string::size_type idx = path.rfind('/', path.length());
+    std::string par_dir = path.substr(0, idx);
+    if (access(("./backup" + par_dir).c_str(), 00) == -1) {
+        std::cout << "[SERVER]: Creating directory.\n";
+        if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
+            std::cout << "[ERROR]: Directory creation failed.\n";
+        }
+    }
     FILE* fp;
     if ((fp = fopen(("./backup" + path).c_str(),"wb") ) == nullptr ) {
         std::cout << "[ERROR]: File creation failed.\n";
@@ -85,11 +115,11 @@ void Server::receive_file(std::string path) {
     char buffer[1024] = {};
     int valread;
     while(true){
-        valread = read(new_socket_descriptor , buffer, 1024);
-        std::cout << "[SERVER]: Received " << valread <<" bytes.\n";
+        valread = read(new_socket_descriptor, buffer, 1024);
+//        std::cout << "[SERVER]: Received " << valread <<" bytes.\n";
         if(valread == 0)
             break;
-        std::cout << "[SERVER]: Saving data to file.\n";
+//        std::cout << "[SERVER]: Saving data to file.\n";
         fwrite(buffer, 1, valread, fp);
     }
     buffer[valread] = '\0';
