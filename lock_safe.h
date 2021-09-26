@@ -22,4 +22,4 @@ bool decode(char szOldFile[],char szNewFile[],char code[]);
 
 bool isCoded(char src[]);
 
-#endif 
+#endif

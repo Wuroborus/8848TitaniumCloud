@@ -173,7 +173,44 @@ bool isCoded(char src[]){
 
 
 
+int main(int argc, char* argv[]) {
+    char s1[32];
+    char s2[32];
+    char s_code[32];
+    cout<<"文件1：";
+    cin>>s1;
+    cout<<"文件2：";
+    cin>>s2;
+    cout<<"password:";
+    cin>>s_code;
+    int n;
+    cout<<"1：加密  2：解密  ";
+    cin>>n;
+    if(n==1){
+        code(s1, s2, s_code);//source dest code
+    }
 
+    else{
+        decode(s1, s2, s_code);//source dest code
+    }
+     decode(s1, s2, s_code);//source dest code
+
+//    printf("-------------------mmmmmmmmm");
+
+//    printf("%d", i);
+//    printf("-------------------mmmmmmmmmm");
+//
+//    if(isCoded("/home/czy/备份软件开发/decode/test/2.jpg"))
+//    {
+//        printf("is");
+//    }else{
+//        printf("is not");
+
+
+
+
+    return 0;
+}
 
 
 
