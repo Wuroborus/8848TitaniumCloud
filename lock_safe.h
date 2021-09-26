@@ -12,15 +12,14 @@ using namespace std;
 
 
 
+
 int FileConvert(char szOldFile[],char szNewFile[]);
 long GetFileSize(FILE *pf);
 void pJ(char str[],char inFile[],char outFile[]);
-
-//chai fen
 int cF(char str[],char inFile[],char outFile[]);
+bool code(char szOldFile[],char szNewFile[],char code[]);
+bool decode(char szOldFile[],char szNewFile[],char code[]);
 
+bool isCoded(char src[]);
 
-int code(char szOldFile[],char szNewFile[],char code[]);
-int decode(char szOldFile[],char szNewFile[],char code[]);
-
-#endif // CODE_H
+#endif 
