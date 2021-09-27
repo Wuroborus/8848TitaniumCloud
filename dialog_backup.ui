@@ -29,10 +29,10 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>200</y>
-     <width>121</width>
-     <height>51</height>
+     <x>20</x>
+     <y>137</y>
+     <width>151</width>
+     <height>28</height>
     </rect>
    </property>
    <property name="text">
@@ -42,7 +42,7 @@
   <widget class="QCheckBox" name="checkBox">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>50</x>
      <y>290</y>
      <width>121</width>
      <height>41</height>
@@ -55,7 +55,7 @@
   <widget class="QCheckBox" name="checkBox_2">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>180</x>
      <y>300</y>
      <width>91</width>
      <height>19</height>
@@ -68,7 +68,7 @@
   <widget class="QCheckBox" name="checkBox_3">
    <property name="geometry">
     <rect>
-     <x>420</x>
+     <x>340</x>
      <y>300</y>
      <width>91</width>
      <height>19</height>
@@ -133,19 +133,6 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>130</y>
-     <width>81</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>备份到：</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
@@ -171,14 +158,14 @@
   <widget class="QCheckBox" name="checkBox_4">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>220</y>
+     <x>470</x>
+     <y>300</y>
      <width>91</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>server</string>
+    <string>服务器</string>
    </property>
   </widget>
  </widget>
