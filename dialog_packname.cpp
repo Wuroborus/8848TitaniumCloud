@@ -16,6 +16,11 @@ Dialog_packname::~Dialog_packname()
 void Dialog_packname::on_pushButton_clicked()//确认按钮
 {
     Packname = ui->lineEdit->text();
+    if(Packname.contains(".") > 0 || Packname.contains("/") > 0)
+    {
+        ui->label_3->setStyleSheet("color:red");
+        return;
+    }
     emit sendpackname(Packname);
     Dialog_packname::close();
 }

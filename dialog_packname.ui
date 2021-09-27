@@ -69,7 +69,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>70</y>
+     <y>60</y>
      <width>161</width>
      <height>16</height>
     </rect>
@@ -82,6 +82,28 @@
    </property>
    <property name="text">
     <string>为空则使用默认名</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>90</y>
+     <width>181</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <underline>true</underline>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(240, 240, 240);</string>
+   </property>
+   <property name="text">
+    <string>包名中不可有.和/</string>
    </property>
   </widget>
  </widget>
