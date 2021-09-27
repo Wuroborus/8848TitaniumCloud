@@ -4,19 +4,21 @@
 
 void strmncpy(char *s, int m, int n, char *t)
 {
-
+    // 请在此添加代码，实现函数strmncpy
+    /********** Begin *********/
     char *p=s,*q=t;
     p+=m;
-    while(*p!='\0'&&n){
+    while(*p!='\0'&&n){//n用来计数，看是否还需要复制
         *q=*p;
         p++;
         q++;
-        n--;
+        n--;//复制一次，n-1
     }
     *q='\0';
 }
 
 
+//返回相对路径，和相对路径减文件名
 void path (char FN[],char * root,char* tem_src,char* tmpDirName) {
     char fn [MAX_PATH];
     strcpy(fn,root);
@@ -51,30 +53,47 @@ int  list_dir_name(char* dirname,string names[MAX_FILE_COUNT], int tabs=0)
     struct dirent* dirp;
     struct stat st;
     char tab[tabs + 1];
+
+    /* open dirent directory */
     if((dp = opendir(dirname)) == NULL)
     {
         perror("opendir");
         return -1;
     }
 
+    /* fill tab array with tabs */
     memset(tab, '\t', tabs);
     tab[tabs] = 0;
+
+    /**
+     * read all files in this dir
+     **/
     while((dirp = readdir(dp)) != NULL)
     {
         char fullname[MAX_PATH];
         memset(fullname, 0, sizeof(fullname));
+
+        /* ignore hidden files */
         if(dirp->d_name[0] == '.')
             continue;
+
+        /* display file name with proper tab */
+//        printf("%s%s\n", tab, dirp->d_name);
 
         strncpy(fullname, dirname, sizeof(fullname));
         strncat(fullname, "/", sizeof(fullname));
         strncat(fullname, dirp->d_name, sizeof(fullname));
+        /* get dirent status */
         if(stat(fullname, &st) == -1)
         {
             perror("stat");
             fputs(fullname, stderr);
             return -1;
         }
+
+        /* if dirent is a directory, call itself */
+
+
         if(S_ISREG(st.st_mode)){  //copy full_name
             for(int i=0;i<MAX_FILE_COUNT;i++)
             {
@@ -100,6 +119,7 @@ int  list_dir_name(char* dirname,string names[MAX_FILE_COUNT], int tabs=0)
 }
 
 
+//无参数构造
 MyCab::MyCab()
 {
     memset(&fh,0x0,sizeof(fh));
@@ -411,3 +431,25 @@ void unpack(char* src,char* dest){
 
 
 
+int main(int argc, char *argv[]){
+
+    char s1[200];
+    cout<<"文件路径：";
+    cin>>s1;
+    char s2[200];
+    cout<<"目标路径：";
+    cin>>s2;
+    int n;
+    cout<<"选择 1：打包  2：解包   ";
+    cin>>n;
+    if(n==1){
+        pack(s1,s2);
+    }
+    else{
+        unpack(s1,s2);
+    }
+
+
+    return 0;
+
+}
