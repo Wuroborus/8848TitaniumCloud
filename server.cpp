@@ -134,60 +134,7 @@ void Server::send_file(const std::string &filepath) {
     service();
 }
 
-void Server::request_service(const std::string& service) {
-    new_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if(new_sock < 0) {
-        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::cout << "[CLIENT] Socket created successfully." << std::endl;
-    e = connect(new_sock, (struct sockaddr*)&new_addr, sizeof(new_addr));
-    if(e == -1) {
-        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::cout << "[CLIENT] Connected to Server." << std::endl;
-    send(new_sock, service.c_str(), service.length(), 0);
-    std::cout << "[CLIENT] Requested server to " << service << std::endl;
-    std::cout << "[CLIENT] Closing the connection." << std::endl;
-    close(new_sock);
-}
-
-void Server::restore(const std::string& source) {
-    new_addr.sin_port = clientport;
-    struct stat s;
-    if (stat(("./backup" + source).c_str(), &s) == 0) {
-        if (s.st_mode & S_IFDIR) {
-            request_service("dircpy " + source);
-            DIR *d = NULL;
-            struct dirent *dp = NULL;
-            struct stat st;
-
-            if(!(d = opendir(source.c_str()))) {
-                std::cerr << "[ERROR] Error in opening directory: " << std::strerror(errno) << std::endl;
-            }
-            while((dp = readdir(d)) != NULL) {
-                if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
-                    continue;
-                stat(source.c_str(), &st);
-                if(!S_ISDIR(st.st_mode)) {
-                    request_service("filecpy " + source + "/" + std::string(dp->d_name));
-                    send_file(source + "/" + std::string(dp->d_name));
-                } else {
-                    restore(source + "/" + std::string(dp->d_name));
-                }
-            }
-            closedir(d);
-        } else if (s.st_mode & S_IFREG) {
-            request_service("filecpy " + source);
-            send_file(source);
-        }
-    } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
-    }
-}
-
-int Server::exist(const std::string& filepath) {
+void Server::exist(const std::string& filepath) {
     new_sock = accept(sockfd, (struct sockaddr*)&new_addr, &addr_size);
     std::string data;
     if (access(("./backup" + filepath).c_str(), 00) == -1) {

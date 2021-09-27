@@ -12,7 +12,7 @@
 
 class Server {
 private:
-    int port, clientport;
+    int port;
     int e;
 
     int sockfd, new_sock;
@@ -26,10 +26,7 @@ public:
     void receive_file(const std::string& filepath);
     void send_file(const std::string& filepath);
     void create_dir(const std::string& dirpath);
-    void request_service(const std::string& service);
-    void restore(const std::string& source);
-
-    int exist(const std::string &filepath);
+    void exist(const std::string &filepath);
 };
 
 
