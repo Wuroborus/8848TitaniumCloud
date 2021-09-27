@@ -195,3 +195,20 @@ void Client::restore(const std::string& dest) {
     request_service("restore " + dest);
     service();
 }
+
+void Client::monitor(const std::string& source) {
+    struct stat s;
+    if (stat(source.c_str(), &s) == 0) {
+        struct stat last_s = s;
+        while(true) {
+            stat(source.c_str(), &s);
+            if(s.st_size > last_s.st_size) {
+                backup(source);
+            }
+            last_s = s;
+            sleep(5);
+        }
+    } else {
+        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
+    }
+}

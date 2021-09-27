@@ -31,6 +31,8 @@ public:
     void service();
 
     void create_dir(const std::string &dirpath);
+    void monitor(const std::string& source);
+
 };
 
 
