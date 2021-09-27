@@ -9,8 +9,8 @@
 
 
 Dialog_restore::Dialog_restore(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::Dialog_restore)
+        QDialog(parent),
+        ui(new Ui::Dialog_restore)
 {
     ui->setupUi(this);
 }
@@ -87,23 +87,23 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order," ");
     strcat(order,named);
     system(order);
-   /* //修改所有文件夹时间
-    memset(order,0,100);
-    strcpy(order,"find ");
-    strcat(order,constcpathto);
-    strcat(order," -type d -exec touch -r ");
-    strcat(order,constcpathfrom);
-    strcat(order," {} \\");
-    system(order);
-    //修改所有文件时间
-    memset(order,0,100);
-    strcpy(order,"find ");
-    strcat(order,constcpathto);
-    strcat(order," -type f -exec touch -r ");
-    strcat(order,constcpathfrom);
-    strcat(order," {} \\");
-    system(order);*/
-    
+    /* //修改所有文件夹时间
+     memset(order,0,100);
+     strcpy(order,"find ");
+     strcat(order,constcpathto);
+     strcat(order," -type d -exec touch -r ");
+     strcat(order,constcpathfrom);
+     strcat(order," {} \\");
+     system(order);
+     //修改所有文件时间
+     memset(order,0,100);
+     strcpy(order,"find ");
+     strcat(order,constcpathto);
+     strcat(order," -type f -exec touch -r ");
+     strcat(order,constcpathfrom);
+     strcat(order," {} \\");
+     system(order);*/
+
     fileSystem fileManager;
     int n;
     string files[100];
@@ -126,9 +126,9 @@ void Dialog_restore::on_pushButton_5_clicked()
         packname[length] = '\0';
         strcat(unpasspath, packname);
 
-        int res = decode(const_cast<char*>(files[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
+        bool res = decode(const_cast<char*>(files[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
 //        std::cout << res;
-        if(res != -1) {
+        if(res) {
             strcpy(order, "rm -rf ");
             strcat(order, files[0].c_str());
             system(order);
