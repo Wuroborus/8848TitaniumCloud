@@ -17,6 +17,14 @@ void Dialog_password::on_pushButton_clicked()//确认按钮
 {
     password = ui->lineEdit->text();
     password_confirm = ui->lineEdit_2->text();
+    if(password == "")
+    {
+        ui->label_4->setStyleSheet("color:red;");
+        return;
+    }
+    else {
+        ui->label_4->setStyleSheet("color:#f0f0f0");
+    }
     if(password == password_confirm)
     {
         emit sendpassword(password);
