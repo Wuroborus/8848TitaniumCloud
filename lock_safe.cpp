@@ -1,10 +1,12 @@
 #include "lock_safe.h"
 
 
+
+
 int FileConvert(char szOldFile[],char szNewFile[])
 {
     FILE *pOldFile=NULL;
-    FILE *pNewFile=NULL;
+    FILE *pNewFile=NULL;//指针初始化为NULL
     char cTemp;
 
     if(szOldFile==NULL||szNewFile==NULL)
@@ -12,7 +14,7 @@ int FileConvert(char szOldFile[],char szNewFile[])
         return ERR;
     }
 
-    pOldFile=fopen(szOldFile,"rb");
+    pOldFile=fopen(szOldFile,"rb");//二进制读写文件
     if(pOldFile==NULL)
     {
         return ERR;
@@ -24,27 +26,29 @@ int FileConvert(char szOldFile[],char szNewFile[])
         fclose(pOldFile);
         return ERR;
     }
+    //一定要先读取字符然后做文件末尾判断
     cTemp=fgetc(pOldFile);
-    while(!feof(pOldFile))
+    while(!feof(pOldFile))//遇到文件结束 返回值为0
     {
-
+//        putchar(cTemp);
         fputc(cTemp,pNewFile);
-        cTemp=fgetc(pOldFile)^KEY;
+        cTemp=fgetc(pOldFile)^KEY;//异或运算加密文件
 
     }
     fclose(pOldFile);
-    fclose(pNewFile);
+    fclose(pNewFile);//用完文件之后需要关闭文件
 
     return OK;
 }
 
 long GetFileSize(FILE *pf)
 {
-    fseek(pf,0,2);
+    //指针移到文件尾
+    fseek(pf,0,/*SEEK_END*/ 2);
     return ftell(pf);
 }
 
-
+//ping jie
 void pJ(char str[],char inFile[],char outFile[]){
     for(int i=0;i<32;i++){
         str[i]=str[i]^KEY;
@@ -76,6 +80,7 @@ void pJ(char str[],char inFile[],char outFile[]){
 }
 
 
+//chai fen
 int cF(char str[],char inFile[],char outFile[]){
 
 
@@ -135,7 +140,7 @@ bool decode(char szOldFile[],char szNewFile[],char code[]){
         s2[i]=szOldFile[i];
     }
     s2[strlen(szOldFile)]='1';
-    if( cF(code,szOldFile,s2)<0) return false;
+    if( cF(code,szOldFile,s2)<0) return false;;
     FileConvert( s2, szNewFile);
     remove(s2);
 
@@ -173,44 +178,8 @@ bool isCoded(char src[]){
 
 
 
-int main(int argc, char* argv[]) {
-    char s1[200];
-    char s2[200];
-    char s_code[32];
-    cout<<"文件1：";
-    cin>>s1;
-    cout<<"文件2：";
-    cin>>s2;
-    cout<<"password:";
-    cin>>s_code;
-    int n;
-    cout<<"1：加密  2：解密  ";
-    cin>>n;
-    if(n==1){
-        code(s1, s2, s_code);//source dest code
-    }
-
-    else{
-        decode(s1, s2, s_code);//source dest code
-    }
 
 
-//    printf("-------------------mmmmmmmmm");
-
-//    printf("%d", i);
-//    printf("-------------------mmmmmmmmmm");
-//
-//    if(isCoded("/home/czy/备份软件开发/decode/test/2.jpg"))
-//    {
-//        printf("is");
-//    }else{
-//        printf("is not");
-
-
-
-
-    return 0;
-}
 
 
 
