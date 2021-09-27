@@ -2,7 +2,6 @@
 
 
 
-
 int FileConvert(char szOldFile[],char szNewFile[])
 {
     FILE *pOldFile=NULL;
@@ -116,7 +115,7 @@ int cF(char str[],char inFile[],char outFile[]){
     return 0;
 }
 
-bool code(char szOldFile[],char szNewFile[],char code[]){
+int code(char szOldFile[],char szNewFile[],char code[]){
 
     char* s1=szOldFile;
     char s2[strlen(s1)+1];
@@ -128,23 +127,23 @@ bool code(char szOldFile[],char szNewFile[],char code[]){
     pJ(code,s2,szNewFile);
     remove(s2);
 
-    return true;
+    return 0;
 }
 
 
 
-bool decode(char szOldFile[],char szNewFile[],char code[]){
+int decode(char szOldFile[],char szNewFile[],char code[]){
     printf("++++++++++++++++++++++++++");//bu neng shan
     char s2[strlen(szOldFile)+1];
     for(int i=0;i<strlen(szOldFile);i++){
         s2[i]=szOldFile[i];
     }
     s2[strlen(szOldFile)]='1';
-    if( cF(code,szOldFile,s2)<0) return false;;
+    if( cF(code,szOldFile,s2)<0) return -1;;
     FileConvert( s2, szNewFile);
     remove(s2);
 
-    return true;
+    return 0;
 }
 bool isCoded(char src[]){
 
@@ -180,6 +179,34 @@ bool isCoded(char src[]){
 
 
 
+
+int main(int argc, char* argv[]) {
+    char s1[200];
+    char s2[200];
+    char s_code[32];
+    cout<<"文件1：";
+    cin>>s1;
+    cout<<"文件2：";
+    cin>>s2;
+    cout<<"password:";
+    cin>>s_code;
+    int n;
+    cout<<"1：加密  2：解密  ";
+    cin>>n;
+    if(n==1){
+        code(s1, s2, s_code);//source dest code
+    }
+
+    else{
+         decode(s1, s2, s_code);//source dest code
+    }
+
+
+
+
+
+    return 0;
+}
 
 
 
