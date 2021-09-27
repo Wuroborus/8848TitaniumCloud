@@ -65,7 +65,7 @@ void Server::service() {
     } else if (buffer[0] == 'd') {
         create_dir(buffer + 7);
     } else if (buffer[0] == 'r') {
-        restore(buffer + 8);
+        send_file(buffer + 9);
     }
 }
 
