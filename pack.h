@@ -22,7 +22,6 @@ using namespace std;
 
 
 void strmncpy(char *s, int m, int n, char *t);
-//返回相对路径，和相对路径减文件名
 void path (char FN[],char * root,char* tem_src,char* tmpDirName) ;
 
 int  list_dir_name(char* dirname,string names[MAX_FILE_COUNT], int tabs);
@@ -32,10 +31,10 @@ class MyCab
 {
 
 public:
-    FileHead fh;//文件头
+    FileHead fh;
 private:
-    char ObjectFilePathName[MAX_PATH];//生成打包文件位置及名称
-    void printCAB(); //显示打包内文件信息
+    char ObjectFilePathName[MAX_PATH];
+    void printCAB();
     void Create_Folders(const char* dir);
 
 public:
