@@ -32,7 +32,7 @@ public:
 
     void create_dir(const std::string &dirpath);
     void monitor(const std::string& source);
-
+    char exist(const std::string& filepath);
 };
 
 

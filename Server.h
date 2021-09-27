@@ -28,6 +28,8 @@ public:
     void create_dir(const std::string& dirpath);
     void request_service(const std::string& service);
     void restore(const std::string& source);
+
+    int exist(const std::string &filepath);
 };
 
 

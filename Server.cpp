@@ -66,6 +66,8 @@ void Server::service() {
         create_dir(buffer + 7);
     } else if (buffer[0] == 'r') {
         send_file(buffer + 9);
+    } else if (buffer[0] == 'e') {
+        exist(buffer + 6);
     }
 }
 
@@ -183,4 +185,17 @@ void Server::restore(const std::string& source) {
     } else {
         std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
     }
+}
+
+int Server::exist(const std::string& filepath) {
+    new_sock = accept(sockfd, (struct sockaddr*)&new_addr, &addr_size);
+    std::string data;
+    if (access(("./backup" + filepath).c_str(), 00) == -1) {
+        data = "n";
+    } else {
+        data = "e";
+    }
+    send(new_sock, data.c_str(), data.length(), 0);
+    close(new_sock);
+    service();
 }

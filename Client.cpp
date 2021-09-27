@@ -104,16 +104,20 @@ void Client::backup(const std::string& source) {
                     continue;
                 stat(source.c_str(), &st);
                 if(!S_ISDIR(st.st_mode)) {
-                    request_service("filecpy " + source + "/" + std::string(dp->d_name));
-                    send_file(source + "/" + std::string(dp->d_name));
+                    if (exist(source + "/" + std::string(dp->d_name)) == 'n') {
+                        request_service("filecpy " + source + "/" + std::string(dp->d_name));
+                        send_file(source + "/" + std::string(dp->d_name));
+                    }
                 } else {
                     backup(source + "/" + std::string(dp->d_name));
                 }
             }
             closedir(d);
         } else if (s.st_mode & S_IFREG) {
-            request_service("filecpy " + source);
-            send_file(source);
+            if (exist(source) == 'n') {
+                request_service("filecpy " + source);
+                send_file(source);
+            }
         }
     } else {
         std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
@@ -158,19 +162,29 @@ void Client::receive_file(const std::string& filepath) {
             std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
         }
     }
-    new_sock = accept(sockfd, (struct sockaddr*)&server_addr, &addr_size);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd < 0) {
+        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "[CLIENT] Socket created successfully." << std::endl;
+    e = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+    if(e == -1) {
+        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "[CLIENT] Connected to Server." << std::endl;
     char buffer[SIZE] = {0};
     FILE *fp;
     fp = fopen(filepath.c_str(), "wb");
     int nCount;
-    while((nCount = recv(new_sock, buffer, SIZE, 0)) > 0 ){
+    while((nCount = recv(sockfd, buffer, SIZE, 0)) > 0 ){
         fwrite(buffer, nCount, 1, fp);
     }
     std::cout << "[CLIENT] Data written in the file successfully." << std::endl;
     std::cout << "[CLIENT] Closing the connection." << std::endl;
-    close(new_sock);
+    close(sockfd);
     fflush(fp);
-    service();
 }
 
 void Client::restore(const std::string& dest) {
@@ -211,4 +225,23 @@ void Client::monitor(const std::string& source) {
     } else {
         std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
     }
+}
+
+char Client::exist(const std::string& filepath) {
+    request_service("exist " + filepath);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sockfd < 0) {
+        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "[CLIENT] Socket created successfully." << std::endl;
+    e = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
+    if(e == -1) {
+        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout << "[CLIENT] Connected to Server." << std::endl;
+    char buffer = {0};
+    recv(sockfd, &buffer, SIZE, 0);
+    return buffer;
 }
