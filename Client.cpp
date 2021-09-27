@@ -97,7 +97,7 @@ void Client::backup(const std::string& source) {
             struct stat st;
 
             if(!(d = opendir(source.c_str()))) {
-                std::cerr << "[ERROR] Error in opening directory: " << std::strerror(errno) << std::endl;
+                std::cerr << "[ERROR] Error in opening directory: " << strerror(errno) << std::endl;
             }
             while((dp = readdir(d)) != NULL) {
                 if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
@@ -116,7 +116,7 @@ void Client::backup(const std::string& source) {
             send_file(source);
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " << strerror(errno) << std::endl;
     }
 }
 
@@ -141,7 +141,7 @@ void Client::create_dir(const std::string& dirpath) {
     if (access(("./backup" + par_dir).c_str(), 00) == -1) {
         std::cout << "[CLIENT] Creating directory." << std::endl;
         if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
-            std::cerr << "[CLIENT] Directory creation failed: " << std::strerror(errno) << std::endl;
+            std::cerr << "[CLIENT] Directory creation failed: " << strerror(errno) << std::endl;
         }
     }
     make_dirs(("./backup" + dirpath).c_str());
@@ -155,7 +155,7 @@ void Client::receive_file(const std::string& filepath) {
     if (access(par_dir.c_str(), 00) == -1) {
         std::cout << "[CLIENT] Creating directory." << std::endl;
         if (make_dirs(par_dir.c_str()) == -1) {
-            std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
+            std::cerr << "[ERROR] Directory creation failed: " << strerror(errno) << std::endl;
         }
     }
     new_sock = accept(sockfd, (struct sockaddr*)&server_addr, &addr_size);
@@ -180,7 +180,7 @@ void Client::restore(const std::string& dest) {
 
     e = bind(sockfd, (struct sockaddr*)&client_addr, sizeof(client_addr));
     if(e < 0) {
-        std::cerr << "[ERROR] Error in bind: " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in bind: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout << "[SERVER] Binding successful." << std::endl;
@@ -188,7 +188,7 @@ void Client::restore(const std::string& dest) {
     if(listen(sockfd, 10) == 0){
         std::cout << "[SERVER] Listening..." << std::endl;
     }else{
-        std::cerr << "[ERROR] Error in listening: " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in listening: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     addr_size = sizeof(server_addr);

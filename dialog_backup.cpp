@@ -131,8 +131,9 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         compressManager.compressFile(named);
     }
 
+    char* packpath = new char[200];
     if(isPack) {
-        char* packpath = new char[200];
+
         strcpy(packpath, named);
         strcat(packpath, "/");
         strcat(packpath, this->Packname.toStdString().c_str());
@@ -149,30 +150,21 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     }
 
     if(isPass) {
-        int index = pathfrom.find_last_of("/");
-        string dirName = pathfrom.substr(index, pathfrom.back());
-        char* passpath = new char[200], * newpasspath = new char[200];
-        strcpy(passpath, named);
-        strcat(passpath, dirName.c_str());
-        strcpy(newpasspath, passpath);
+        char* newpasspath = new char[200];
+        strcpy(newpasspath, packpath);
         strcat(newpasspath, ".8848pass");
 
-        code(passpath, newpasspath, (char*)Password.toStdString().c_str());
+        code(packpath, newpasspath, (char*)Password.toStdString().c_str());
+        char* order = new char[100];
+        strcpy(order, "rm -rf ");
+        strcat(order, packpath);
+        system(order);
     }
 
     // Server
     if(isRemote) {
         Client c("127.0.0.1");
-        c.request_service("backup " + pathto);
-
-        fileSystem fileManager;
-        int fileno;
-        string files[100];
-        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
-        for(int i = 0; i < fileno; i++)
-        {
-            c.send_file(files[i]);
-        }
+        c.backup(pathfrom);
     }
 
 

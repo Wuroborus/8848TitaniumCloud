@@ -2,4 +2,5 @@
 
 int main() {
 	Server s;
+	s.service();
 }

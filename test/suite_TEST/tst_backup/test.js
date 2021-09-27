@@ -50,7 +50,7 @@ function main() {
     
     compress(); 
     pack();
-    //pass();
+    pass();
     
     clickButton(waitForObject(names.dialogBackupPushButton5QPushButton));
 }

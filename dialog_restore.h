@@ -15,7 +15,6 @@ class Dialog_restore : public QDialog
 public:
     explicit Dialog_restore(QWidget *parent = nullptr);
     ~Dialog_restore();
-    QString getpwForDecrypt();
 
 private slots:
     void on_pushButton_4_clicked();
@@ -27,6 +26,8 @@ private slots:
     void on_pushButton_5_clicked();
 
     void getpwforDecrypt(QString);
+
+
 
 private:
     Ui::Dialog_restore *ui;
