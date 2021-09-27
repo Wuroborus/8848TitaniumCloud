@@ -50,6 +50,7 @@ void Dialog_backup::on_checkBox_3_stateChanged(int arg1)
 {
     if(arg1)
     {
+        ui->checkBox->setChecked(true);
         dialog_password = new Dialog_password(this);
         dialog_password->setModal(true);
         QObject::connect(dialog_password,SIGNAL(sendpassword(QString)),this,SLOT(getpassword(QString)));
@@ -131,9 +132,8 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         compressManager.compressFile(named);
     }
 
-    char* packpath = new char[200];
     if(isPack) {
-
+        char* packpath = new char[200];
         strcpy(packpath, named);
         strcat(packpath, "/");
         strcat(packpath, this->Packname.toStdString().c_str());
@@ -150,21 +150,30 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     }
 
     if(isPass) {
-        char* newpasspath = new char[200];
-        strcpy(newpasspath, packpath);
+        int index = pathfrom.find_last_of("/");
+        string dirName = pathfrom.substr(index, pathfrom.back());
+        char* passpath = new char[200], * newpasspath = new char[200];
+        strcpy(passpath, named);
+        strcat(passpath, dirName.c_str());
+        strcpy(newpasspath, passpath);
         strcat(newpasspath, ".8848pass");
 
-        code(packpath, newpasspath, (char*)Password.toStdString().c_str());
-        char* order = new char[100];
-        strcpy(order, "rm -rf ");
-        strcat(order, packpath);
-        system(order);
+        code(passpath, newpasspath, (char*)Password.toStdString().c_str());
     }
 
     // Server
     if(isRemote) {
         Client c("127.0.0.1");
-        c.backup(pathfrom);
+        c.request_service("backup " + pathto);
+
+        fileSystem fileManager;
+        int fileno;
+        string files[100];
+        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
+        for(int i = 0; i < fileno; i++)
+        {
+            c.send_file(files[i]);
+        }
     }
 
 
