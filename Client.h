@@ -1,31 +1,37 @@
-#ifndef CLIENT_CLIENT_H
-#define CLIENT_CLIENT_H
+#ifndef NEWCLIENT_CLIENT_H
+#define NEWCLIENT_CLIENT_H
 #include <iostream>
-#include <fstream>
-#include <cstdio>
+#include <stdlib.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <cstdlib>
-#include <netinet/in.h>
+#include <string.h>
 #include <arpa/inet.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#define SIZE 1024
+
 
 class Client {
 private:
-    int PORT;
-
-    int general_socket_descriptor;
-
-    struct sockaddr_in dest_address;
-    int address_length;
+    int port;
+    int clientport;
+    int e;
+    int sockfd, new_sock;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t addr_size;
 
 public:
-    Client(std::string address);
-    void create_socket();
-    void create_connection();
-    void request_service(std::string service);
-    void send_file(std::string path);
-    void receive_file(std::string path);
+    Client(char *server_ip);
+    int make_dirs(const char *dir);
+    void request_service(const std::string& service);
+    void send_file(const std::string& filepath);
+    void backup(const std::string& source);
+    void receive_file(const std::string& filepath);
+    void restore(const std::string& dest);
+
+    void service();
+
+    void create_dir(const std::string &dirpath);
 };
 
 
-#endif //CLIENT_CLIENT_H
+#endif //NEWCLIENT_CLIENT_H

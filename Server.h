@@ -1,38 +1,34 @@
-#ifndef SERVER_SERVER_H
-#define SERVER_SERVER_H
+#ifndef NEWSERVER_SERVER_H
+#define NEWSERVER_SERVER_H
 #include <iostream>
-#include <fstream>
-#include <cstdio>
+#include <stdlib.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <cstdlib>
-#include <netinet/in.h>
+#include <string.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <cstring>
+#include <string>
+#include <dirent.h>
+#define SIZE 1024
 
 class Server {
 private:
-    int PORT;
+    int port, clientport;
+    int e;
 
-    int general_socket_descriptor;
-    int new_socket_descriptor;
-
-    struct sockaddr_in address;
-    int address_length;
+    int sockfd, new_sock;
+    struct sockaddr_in server_addr, new_addr;
+    socklen_t addr_size;
 
 public:
     Server();
-    void create_socket();
-    void bind_socket();
-    void set_listen();
-    void accept_requests();
-    void send_file(std::string path);
-    void receive_file(std::string path);
     int make_dirs(const char *dir);
-    void dup_dir(std::string path);
+    void service();
+    void receive_file(const std::string& filepath);
+    void send_file(const std::string& filepath);
+    void create_dir(const std::string& dirpath);
+    void request_service(const std::string& service);
+    void restore(const std::string& source);
 };
 
 
-#endif //SERVER_SERVER_H
+#endif //NEWSERVER_SERVER_H
