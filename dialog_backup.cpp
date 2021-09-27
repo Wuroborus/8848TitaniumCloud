@@ -51,6 +51,7 @@ void Dialog_backup::on_checkBox_3_stateChanged(int arg1)
     if(arg1)
     {
         ui->checkBox->setChecked(true);
+        Dialog_backup::on_checkBox_stateChanged(1);
         dialog_password = new Dialog_password(this);
         dialog_password->setModal(true);
         QObject::connect(dialog_password,SIGNAL(sendpassword(QString)),this,SLOT(getpassword(QString)));
@@ -206,6 +207,7 @@ void Dialog_backup::on_checkBox_2_stateChanged(int arg1)
 {
     if(arg1)
     {
+
         isCompress = true;
     }
     else {
@@ -218,8 +220,10 @@ void Dialog_backup::on_checkBox_4_stateChanged(int arg1)
     // remote or local
     if(arg1) {
         isRemote = true;
+         ui->pushButton_2->setEnabled(false);
     }
     else {
         isRemote = false;
+        ui->pushButton_2->setEnabled(true);
     }
 }
