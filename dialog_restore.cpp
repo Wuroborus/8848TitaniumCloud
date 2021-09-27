@@ -126,11 +126,14 @@ void Dialog_restore::on_pushButton_5_clicked()
         packname[length] = '\0';
         strcat(unpasspath, packname);
 
-        decode((char*)files[0].c_str(), unpasspath, (char*)pwfordecrypt.toStdString().c_str());
+        int res = decode(const_cast<char*>(files[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
+//        std::cout << res;
+        if(res != -1) {
+            strcpy(order, "rm -rf ");
+            strcat(order, files[0].c_str());
+            system(order);
+        }
     }
-    strcpy(order, "rm -rf ");
-    strcat(order, files[0].c_str());
-    system(order);
 
     if(n == 1 && !suffixStr.compare(".8848pack")) {
         int index = pathfrom.find_last_of("/");
