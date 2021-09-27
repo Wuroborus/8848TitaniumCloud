@@ -141,7 +141,7 @@ void Client::monitor(const std::string& source) {
             sleep(5);
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " <<strerror(errno) << std::endl;
     }
 }
 

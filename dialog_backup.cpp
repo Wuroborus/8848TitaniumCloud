@@ -138,7 +138,7 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         strcat(packpath, "/");
         strcat(packpath, this->Packname.toStdString().c_str());
         strcat(packpath, ".8848pack");
-        pack((char*)pathto.c_str(), packpath);
+        pack(named, packpath);
 
         int index = pathfrom.find_last_of("/");
         string dirName = pathfrom.substr(index, pathfrom.back());
