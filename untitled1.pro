@@ -43,7 +43,9 @@ SOURCES += \
     file_time.cpp \
     huffman.cpp \
     filesystem.cpp \
-    Client.cpp
+    Client.cpp \
+    pack.cpp \
+    lock_safe.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -59,6 +61,8 @@ HEADERS += \
     huffman.h \
     filesystem.h \
     Client.h \
+    pack.h \
+    lock_safe.h
 
 FORMS += \
         mainwindow.ui \

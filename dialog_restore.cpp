@@ -4,6 +4,7 @@
 #include<dirent.h>
 
 #include "huffman.h"
+#include "pack.h"
 
 
 Dialog_restore::Dialog_restore(QWidget *parent) :
@@ -110,10 +111,26 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order," {} \\");
     system(order);*/
     
-    
+    fileSystem fileManager;
+    int n;
+    string files[100];
+    fileManager.getAllFiles(named, &n, files);
+    string suffixStr = files[0].substr(files[0].find_last_of('.'));
+    if(n == 1 && !suffixStr.compare(".8848pack")) {
+        int index = pathfrom.find_last_of("/");
+        string dirName = pathfrom.substr(index, pathfrom.back());
+        char* unpackpath = new char[200];
+        strcpy(unpackpath, named);
+        strcat(unpackpath, "/");
+        strcat(unpackpath, dirName.c_str());
+        unpack((char*)files[0].c_str(), unpackpath);
+    }
 
-    delete order;
+    strcpy(order, "rm -rf ");
+    strcat(order, files[0].c_str());
+    system(order);
 
     com_uncompress compressManager;
     compressManager.uncompressFile(named);
+
 }
