@@ -34,5 +34,6 @@ void OpenThedir(const char *path, int *n, string *str)
 
 void fileSystem::getAllFiles(const char *path, int *n, string *str)
 {
+    *n = 0;
     OpenThedir(path, n, str);
 }

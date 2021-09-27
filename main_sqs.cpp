@@ -1,6 +1,4 @@
-//#include "mainwindow.h"
-//#include <QApplication>
-//最多打包文件个数
+
 
 #include"pack.h"
 

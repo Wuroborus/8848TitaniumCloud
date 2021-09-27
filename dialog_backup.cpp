@@ -8,6 +8,8 @@
 #include <file_time.h>
 
 #include "huffman.h"
+#include "pack.h"
+#include "lock_safe.h"
 
 #include "Client.h"
 
@@ -130,37 +132,32 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     }
 
     if(isPack) {
-        // pack
-        DIR *dir;
-        struct dirent *ptr;
-        dir = opendir(named);
+        char* packpath = new char[200];
+        strcpy(packpath, named);
+        strcat(packpath, "/");
+        strcat(packpath, this->Packname.toStdString().c_str());
+        strcat(packpath, ".8848pack");
+        pack((char*)pathto.c_str(), packpath);
 
-        // "." is insert
-        // ptr = readdir(dir);
-        // strcat(named,ptr->d_name);
-
-
-        if(Packname == ""){
-//            packUnpack packUnpack_o;
-//            packUnpack_o.pack(named,ptr->d_name);
-        }
-        else
-        {
-//            packUnpack packUnpack_o;
-//            packUnpack_o.pack(named,Packname.toStdString());
-        }
-        closedir(dir);
-        strcpy(order,"rm -rf ");
-        strcat(order,named);
+        int index = pathfrom.find_last_of("/");
+        string dirName = pathfrom.substr(index, pathfrom.back());
+        char* order = new char[100];
+        strcpy(order, "rm -rf ");
+        strcat(order, named);
+        strcat(order, dirName.c_str());
         system(order);
-
     }
 
     if(isPass) {
-//        lock_unlock lockManager;
-//        std::string pass = Password.toStdString();
-//        char* constcpass = (char*)pass.c_str();
-//        lockManager.lock(named, constcpass);
+        int index = pathfrom.find_last_of("/");
+        string dirName = pathfrom.substr(index, pathfrom.back());
+        char* passpath = new char[200], * newpasspath = new char[200];
+        strcpy(passpath, named);
+        strcat(passpath, dirName.c_str());
+        strcpy(newpasspath, passpath);
+        strcat(newpasspath, ".8848pass");
+
+        code(passpath, newpasspath, (char*)Password.toStdString().c_str());
     }
 
     // Server
