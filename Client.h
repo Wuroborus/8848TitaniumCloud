@@ -13,15 +13,13 @@
 class Client {
 private:
     int port;
-    int clientport;
     int e;
-    int sockfd, new_sock;
-    struct sockaddr_in server_addr, client_addr;
+    int sockfd;
+    struct sockaddr_in server_addr;
     socklen_t addr_size;
 
 public:
     Client(char *server_ip);
-    int make_dirs(const char *dir);
     void request_service(const std::string& service);
     void send_file(const std::string& filepath);
     void backup(const std::string& source);
@@ -31,6 +29,8 @@ public:
     void service();
 
     void create_dir(const std::string &dirpath);
+    void monitor(const std::string& source);
+    char exist(const std::string& filepath);
 };
 
 

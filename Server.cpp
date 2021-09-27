@@ -27,7 +27,7 @@ Server::Server() {
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(sockfd < 0) {
-        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in socket: " << std::strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout << "[SERVER] Socket created successfully." << std::endl;
@@ -38,7 +38,7 @@ Server::Server() {
 
     e = bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
     if(e < 0) {
-        std::cerr << "[ERROR] Error in bind: " << strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in bind: " << std::strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout << "[SERVER] Binding successful." << std::endl;
@@ -46,7 +46,7 @@ Server::Server() {
     if(listen(sockfd, 10) == 0){
         std::cout << "[SERVER] Listening..." << std::endl;
     }else{
-        std::cerr << "[ERROR] Error in listening: " << strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in listening: " << std::strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     addr_size = sizeof(new_addr);
@@ -65,7 +65,9 @@ void Server::service() {
     } else if (buffer[0] == 'd') {
         create_dir(buffer + 7);
     } else if (buffer[0] == 'r') {
-        restore(buffer + 8);
+        send_file(buffer + 9);
+    } else if (buffer[0] == 'e') {
+        exist(buffer + 6);
     }
 }
 
@@ -75,7 +77,7 @@ void Server::receive_file(const std::string& filepath) {
     if (access(("./backup" + par_dir).c_str(), 00) == -1) {
         std::cout << "[SERVER] Creating directory." << std::endl;
         if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
-            std::cerr << "[ERROR] Directory creation failed: " << strerror(errno) << std::endl;
+            std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
         }
     }
     new_sock = accept(sockfd, (struct sockaddr*)&new_addr, &addr_size);
@@ -99,7 +101,7 @@ void Server::create_dir(const std::string& dirpath) {
     if (access(("./backup" + par_dir).c_str(), 00) == -1) {
         std::cout << "[SERVER] Creating directory." << std::endl;
         if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
-            std::cerr << "[ERROR] Directory creation failed: " << strerror(errno) << std::endl;
+            std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
         }
     }
     make_dirs(("./backup" + dirpath).c_str());
@@ -132,55 +134,15 @@ void Server::send_file(const std::string &filepath) {
     service();
 }
 
-void Server::request_service(const std::string& service) {
-    new_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if(new_sock < 0) {
-        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::cout << "[CLIENT] Socket created successfully." << std::endl;
-    e = connect(new_sock, (struct sockaddr*)&new_addr, sizeof(new_addr));
-    if(e == -1) {
-        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    std::cout << "[CLIENT] Connected to Server." << std::endl;
-    send(new_sock, service.c_str(), service.length(), 0);
-    std::cout << "[CLIENT] Requested server to " << service << std::endl;
-    std::cout << "[CLIENT] Closing the connection." << std::endl;
-    close(new_sock);
-}
-
-void Server::restore(const std::string& source) {
-    new_addr.sin_port = clientport;
-    struct stat s;
-    if (stat(("./backup" + source).c_str(), &s) == 0) {
-        if (s.st_mode & S_IFDIR) {
-            request_service("dircpy " + source);
-            DIR *d = NULL;
-            struct dirent *dp = NULL;
-            struct stat st;
-
-            if(!(d = opendir(source.c_str()))) {
-                std::cerr << "[ERROR] Error in opening directory: " << strerror(errno) << std::endl;
-            }
-            while((dp = readdir(d)) != NULL) {
-                if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
-                    continue;
-                stat(source.c_str(), &st);
-                if(!S_ISDIR(st.st_mode)) {
-                    request_service("filecpy " + source + "/" + std::string(dp->d_name));
-                    send_file(source + "/" + std::string(dp->d_name));
-                } else {
-                    restore(source + "/" + std::string(dp->d_name));
-                }
-            }
-            closedir(d);
-        } else if (s.st_mode & S_IFREG) {
-            request_service("filecpy " + source);
-            send_file(source);
-        }
+void Server::exist(const std::string& filepath) {
+    new_sock = accept(sockfd, (struct sockaddr*)&new_addr, &addr_size);
+    std::string data;
+    if (access(("./backup" + filepath).c_str(), 00) == -1) {
+        data = "n";
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << strerror(errno) << std::endl;
+        data = "e";
     }
+    send(new_sock, data.c_str(), data.length(), 0);
+    close(new_sock);
+    service();
 }

@@ -102,8 +102,8 @@ int cF(char str[],char inFile[],char outFile[]){
     unsigned char *pTmpData = NULL;
     pTmpData = new unsigned char[all-64];
     fread(pTmpData,all-64,1,pCAB);
-    for(int i=0;i<32;i++){
-        if(str[i]!=s[i]){
+    for(int i=0;i<strlen(str) ;i++){
+        if(str[i]!=s[i] || s[i] == '\0'){
             printf("password error");
             return -1;
         }
