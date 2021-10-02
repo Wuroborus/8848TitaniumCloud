@@ -1,39 +1,60 @@
 
 #include "filesystem.h"
 
-void OpenThedir(const char *path, int *n, string *str)
-{
-    struct dirent* filename;
-    DIR* dir = opendir(path);
-    while((filename = readdir(dir))!= NULL)
-    {
+bool openDir(string path, vector<string>& fileList) {
+    struct dirent* file;
+    DIR* dir = opendir(path.c_str());
+    while ((file = readdir(dir)) != NULL) {
         // get rid of "." and ".."
-        if( strcmp( filename->d_name , "." ) == 0 ||
-            strcmp( filename->d_name , "..") == 0    )
+        if( strcmp( file->d_name , "." ) == 0 ||
+            strcmp( file->d_name , "..") == 0    )
             continue;
-        // store the relative path
-        if(filename->d_type == 4)
-        {
-            // dir
-            char* subpath = new char[200];
-            strcpy(subpath, path);
-            strcat(subpath, "/");
-            strcat(subpath, filename->d_name);
-            OpenThedir(subpath, n, str);
+        path = path + "/" + file->d_name;
+        if(file->d_type == 4) {
+            openDir(path.c_str(), fileList);
         }
         else {
-            (*n)++;
-            char* fileName = new char[200];
-            strcpy(fileName, path);
-            strcat(fileName, "/");
-            strcat(fileName, filename->d_name);
-            str[*n - 1] = fileName;
+            fileList.push_back(path);
         }
     }
+    return true;
 }
 
-void fileSystem::getAllFiles(const char *path, int *n, string *str)
+fileSystem::fileSystem(const char *path)
 {
-    *n = 0;
-    OpenThedir(path, n, str);
+    openDir(path, this->fileList);
+    fileTypeList.resize(fileList.size());
+    inodeList.resize(fileList.size());
+    linkList.resize(fileList.size());
 }
+
+bool fileSystem::getFileType()
+{
+    struct stat buf;
+    for(int i = 0; i < fileList.size(); i++) {
+        lstat(fileList[i].c_str(), &buf);
+        if(S_ISLNK(buf.st_mode)) {
+            char* oldpath = new char[300];
+            int result = readlink(fileList[i].c_str(), oldpath, MAX_PATH);
+            if(result <0 || result >= MAX_PATH) return false;
+            else {
+                oldpath[result] ='\0';
+                if(oldpath[0] == '/' || oldpath[0] == '.') {
+                    fileTypeList[i] = SYM_OUT;
+                }
+                else {
+                    fileTypeList[i] = SYM_IN;
+                }
+            }
+        }
+        else if (buf.st_nlink == 1) {
+            fileTypeList[i] = HARD_IN;
+        }
+        else {
+            fileTypeList[i] = REG_FILE;
+        }
+        inodeList[i] = buf.st_ino;
+        linkList[i] = buf.st_nlink;
+     }
+}
+
