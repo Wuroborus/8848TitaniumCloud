@@ -9,12 +9,12 @@ bool openDir(string path, vector<string>& fileList) {
         if( strcmp( file->d_name , "." ) == 0 ||
             strcmp( file->d_name , "..") == 0    )
             continue;
-        path = path + "/" + file->d_name;
+        string newpath = path + "/" + file->d_name;
         if(file->d_type == 4) {
-            openDir(path.c_str(), fileList);
+            openDir(newpath.c_str(), fileList);
         }
         else {
-            fileList.push_back(path);
+            fileList.push_back(newpath);
         }
     }
     return true;
@@ -47,7 +47,7 @@ bool fileSystem::getFileType()
                 }
             }
         }
-        else if (buf.st_nlink == 1) {
+        else if (buf.st_nlink != 1) {
             fileTypeList[i] = HARD_IN;
         }
         else {
@@ -55,6 +55,12 @@ bool fileSystem::getFileType()
         }
         inodeList[i] = buf.st_ino;
         linkList[i] = buf.st_nlink;
-     }
+    }
+}
+
+bool fileSystem::getFileList(const char* path)
+{
+    fileList.clear();
+    openDir(path, this->fileList);
 }
 

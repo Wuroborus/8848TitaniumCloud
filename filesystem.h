@@ -21,7 +21,6 @@ using namespace std;
 
 class fileSystem{
 public:
-    int count;
     vector<string>fileList;
     vector<int>fileTypeList;
     vector<size_t>inodeList;
@@ -31,6 +30,7 @@ public:
 public:
     fileSystem(const char* path);
     bool getFileType();
+    bool getFileList(const char* path);
 };
 
 #endif // FILESYSTEM_H

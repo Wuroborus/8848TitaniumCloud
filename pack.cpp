@@ -363,30 +363,20 @@ void pack(char* src,char* dest){
 
     struct stat state_of_entry;
     lstat(src, &state_of_entry);
+
+
+
     if (S_ISDIR(state_of_entry.st_mode)) //如果要复制的是文件夹
     {
 //            mc.fh.src=src;
         strcpy(mc.fh.src,src);
 
-
-
-        string names[MAX_FILE_COUNT];
-        list_dir_name(src,names);
-        for(int i=0;i<MAX_FILE_COUNT;i++)
-        {
-            if(names[i]!=""){
-                //添加要打包的文件
-                mc.AddFile((char*)names[i].c_str());//(char*)str.c_str()
-
-            }
-            if(names[i]==""&&names[i+1]==""){
-                mc.DoMakeCAB();
-
-
-                break;
-            }
+        fileSystem fileManager(src);
+        for(auto file : fileManager.fileList) {
+            mc.AddFile((char*)file.c_str());
         }
 
+        mc.DoMakeCAB();
 
     }
 
