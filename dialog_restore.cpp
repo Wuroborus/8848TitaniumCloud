@@ -87,31 +87,13 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order," ");
     strcat(order,named);
     system(order);
-    /* //修改所有文件夹时间
-     memset(order,0,100);
-     strcpy(order,"find ");
-     strcat(order,constcpathto);
-     strcat(order," -type d -exec touch -r ");
-     strcat(order,constcpathfrom);
-     strcat(order," {} \\");
-     system(order);
-     //修改所有文件时间
-     memset(order,0,100);
-     strcpy(order,"find ");
-     strcat(order,constcpathto);
-     strcat(order," -type f -exec touch -r ");
-     strcat(order,constcpathfrom);
-     strcat(order," {} \\");
-     system(order);*/
 
-    fileSystem fileManager;
-    int n;
-    string files[100];
-    fileManager.getAllFiles(named, &n, files);
-    string suffixStr = files[0].substr(files[0].find_last_of('.'));
+    fileSystem fileManager(named);
+    string suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
 
-    if(n == 1 && !suffixStr.compare(".8848pass")) {
-
+    if(fileManager.fileList.size() == 1 && !suffixStr.compare(".8848pass")) {
+        cout << "unpass........." << endl;
+        cout << "file has a password" << endl;
         dialog_pwfordecrypt = new Dialog_PwForDecrypt(this);
         dialog_pwfordecrypt->setModal(true);
         QObject::connect(dialog_pwfordecrypt,SIGNAL(sendpwForDecrypt(QString)),this,SLOT(getpwforDecrypt(QString)));
@@ -121,33 +103,53 @@ void Dialog_restore::on_pushButton_5_clicked()
         char* unpasspath = new char[200];
         strcpy(unpasspath, named);
         char* packname = new char[50];
-        int length = files[0].substr(files[0].find_last_of('/')).length() - strlen(".8848pass");
-        strncpy(packname, files[0].substr(files[0].find_last_of('/')).c_str(), length);
+        int length = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('/')).length() - strlen(".8848pass");
+        strncpy(packname, fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('/')).c_str(), length);
         packname[length] = '\0';
         strcat(unpasspath, packname);
 
-        bool res = decode(const_cast<char*>(files[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
+        delete[] unpasspath, packname;
+
+        cout << "unpass " << fileManager.fileList[0] << " to " << pwfordecrypt.toStdString() << endl;
+        bool res = decode(const_cast<char*>(fileManager.fileList[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
 //        std::cout << res;
         if(res) {
             strcpy(order, "rm -rf ");
-            strcat(order, files[0].c_str());
+            strcat(order, fileManager.fileList[0].c_str());
             system(order);
+
         }
     }
 
-    if(n == 1 && !suffixStr.compare(".8848pack")) {
+    fileManager.getFileList(named);
+    suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+
+    if(fileManager.fileList.size() == 1 && !suffixStr.compare(".8848pack")) {
+        cout << "unpack........." << endl;
         int index = pathfrom.find_last_of("/");
         string dirName = pathfrom.substr(index, pathfrom.back());
         char* unpackpath = new char[200];
         strcpy(unpackpath, named);
         strcat(unpackpath, "/");
         strcat(unpackpath, dirName.c_str());
-        unpack((char*)files[0].c_str(), unpackpath);
+
+        cout << "unpack " << fileManager.fileList[0] << " to " << unpackpath << endl;
+        unpack((char*)fileManager.fileList[0].c_str(), unpackpath);
+        delete[] unpackpath;
+
+        string order = "rm -rf " + fileManager.fileList[0];
+        system(order.c_str());
     }
 
 
+    fileManager.getFileList(named);
+    suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+    cout << "suffix is : " << suffixStr << endl;
+    if(!suffixStr.compare(".8848com")) {
+        cout << "suffix is: " << suffixStr << " uncompress........." << endl;
 
-    com_uncompress compressManager;
-    compressManager.uncompressFile(named);
-
+        com_uncompress compressManager;
+        cout << "uncompress " << named << endl;
+        compressManager.uncompressFile(named);
+    }
 }

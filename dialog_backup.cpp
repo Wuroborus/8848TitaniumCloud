@@ -51,7 +51,7 @@ void Dialog_backup::on_checkBox_3_stateChanged(int arg1)
     if(arg1)
     {
         ui->checkBox->setChecked(true);
-        Dialog_backup::on_checkBox_stateChanged(1);
+        //Dialog_backup::on_checkBox_stateChanged(1);
         dialog_password = new Dialog_password(this);
         dialog_password->setModal(true);
         QObject::connect(dialog_password,SIGNAL(sendpassword(QString)),this,SLOT(getpassword(QString)));
@@ -86,9 +86,6 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         ui->label_2->setStyleSheet("color:#f0f0f0");
     }
 
-    if(!isRemote) {
-
-    }
     char* named = new char[50];
     for(int i = 0;i<=99;i++)
     {
@@ -119,68 +116,87 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     strcat(order,named);
     system(order);
 
-    //delete order;
-//    file_time* GotFromtime = new file_time;
-//    char* cpathfrom;
-//    char* cpathto;
-//    strcpy(cpathfrom,constcpathfrom);
-//    strcpy(cpathto,constcpathto);
-//    GotFromtime->changefiletime(cpathfrom,cpathto);
+    delete[] order;
 
     if(isCompress) {
         // compress
         com_uncompress compressManager;
+        cout << "compress: " << named << endl;
         compressManager.compressFile(named);
     }
 
+    string parentpath, packpathforpass;
     if(isPack) {
+        cout << "Packing.........." << endl;
         char* packpath = new char[200];
         strcpy(packpath, named);
         strcat(packpath, "/");
         strcat(packpath, this->Packname.toStdString().c_str());
         strcat(packpath, ".8848pack");
-        pack(named, packpath);
 
-        int index = pathfrom.find_last_of("/");
-        string dirName = pathfrom.substr(index, pathfrom.back());
-        char* order = new char[100];
-        strcpy(order, "rm -rf ");
-        strcat(order, named);
-        strcat(order, dirName.c_str());
-        system(order);
+        char* sourcepath = new char [MAX_PATH];
+        strcpy(sourcepath, named);
+        strcat(sourcepath, "/");
+
+
+        struct dirent* file;
+        DIR* dir = opendir(named);
+        while ((file = readdir(dir)) != NULL) {
+            // get rid of "." and ".."
+            if( strcmp( file->d_name , "." ) == 0 ||
+                strcmp( file->d_name , "..") == 0    )
+                continue;
+            else strcat(sourcepath, file->d_name);
+        }
+        cout << "pack" << sourcepath << " to " << packpath << endl;
+        pack(sourcepath, packpath);
+        parentpath = sourcepath;
+        packpathforpass = packpath;
+
+        delete [] packpath;
+        delete []  sourcepath;
+
+        string order = "rm -rf " + parentpath;
+        cout << order << endl;
+        system(order.c_str());
     }
 
     if(isPass) {
-        int index = pathfrom.find_last_of("/");
-        string dirName = pathfrom.substr(index, pathfrom.back());
-        char* passpath = new char[200], * newpasspath = new char[200];
-        strcpy(passpath, named);
-        strcat(passpath, dirName.c_str());
-        strcpy(newpasspath, passpath);
-        strcat(newpasspath, ".8848pass");
+        cout << "Pass.........." << endl;
+        string newpasspath = packpathforpass + ".8848pass";
 
-        code(passpath, newpasspath, (char*)Password.toStdString().c_str());
+        char* packpath = new char[MAX_PATH];
+        strcpy(packpath, packpathforpass.c_str());
+
+        cout << "pass" << packpath << " to " << newpasspath << endl;
+        code(packpath, (char*)newpasspath.c_str(), (char*)Password.toStdString().c_str());
+
+        string order = "rm -rf " + packpathforpass;
+        cout << order << endl;
+        system(order.c_str());
+
+        delete[] packpath;
     }
 
     // Server
     if(isRemote) {
-        Client c("127.0.0.1");
-        c.request_service("backup " + pathto);
+//        Client c("127.0.0.1");
+//        c.request_service("backup " + pathto);
 
-        fileSystem fileManager;
-        int fileno;
-        string files[100];
-        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
-        for(int i = 0; i < fileno; i++)
-        {
-            c.send_file(files[i]);
-        }
+////        -fileSystem fileManager;
+//        int fileno;
+//        string files[100];
+////        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
+//        for(int i = 0; i < fileno; i++)
+//        {
+//            c.send_file(files[i]);
+//        }
     }
 
 
     dialog_success = new Dialog_success(this);
     dialog_success->setModal(true);
-    dialog_success->show();
+    dialog_success->exec();
 }
 
 void Dialog_backup::getpackname(QString packname)

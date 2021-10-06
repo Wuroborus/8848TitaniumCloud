@@ -49,11 +49,11 @@ long GetFileSize(FILE *pf)
 
 //ping jie
 void pJ(char str[],char inFile[],char outFile[]){
-    for(int i=0;i<32;i++){
+    for(int i=0;i<strlen(str);i++){
         str[i]=str[i]^KEY;
     }
     char pd[32]={'s'};
-    for(int i=0;i<32;i++){
+    for(int i=0;i<strlen(pd);i++){
         pd[i]=pd[i]^KEY;
     }
 
@@ -119,10 +119,8 @@ int code(char szOldFile[],char szNewFile[],char code[]){
 
     char* s1=szOldFile;
     char s2[strlen(s1)+1];
-    for(int i=0;i<strlen(s1);i++){
-        s2[i]=s1[i];
-    }
-    s2[strlen(s1)]='1';
+    strcpy(s2, s1);
+    strcat(s2, "1");
     FileConvert( szOldFile, s2);
     pJ(code,s2,szNewFile);
     remove(s2);

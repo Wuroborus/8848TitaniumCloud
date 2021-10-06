@@ -15,12 +15,7 @@
 // close file
 #include <unistd.h>
 
-// file type
-#define REG_FILE 0
-#define SYM_IN 1
-#define SYM_OUT 2
-#define HARD_IN 3
-#define HARD_OUT 4
+
 
 using namespace std;
 
