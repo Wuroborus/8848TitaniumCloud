@@ -118,6 +118,22 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
 
     delete[] order;
 
+    string remotePath;
+    struct dirent* file;
+    DIR* dir = opendir(named);
+    while ((file = readdir(dir)) != NULL) {
+        // get rid of "." and ".."
+        if( strcmp( file->d_name , "." ) == 0 ||
+            strcmp( file->d_name , "..") == 0    )
+            continue;
+        else {
+            remotePath = named;
+            remotePath.append("/");
+            remotePath.append(file->d_name);
+            break;
+        }
+    }
+
     if(isCompress) {
         // compress
         com_uncompress compressManager;
@@ -134,31 +150,17 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         strcat(packpath, this->Packname.toStdString().c_str());
         strcat(packpath, ".8848pack");
 
-        char* sourcepath = new char [MAX_PATH];
-        strcpy(sourcepath, named);
-        strcat(sourcepath, "/");
-
-
-        struct dirent* file;
-        DIR* dir = opendir(named);
-        while ((file = readdir(dir)) != NULL) {
-            // get rid of "." and ".."
-            if( strcmp( file->d_name , "." ) == 0 ||
-                strcmp( file->d_name , "..") == 0    )
-                continue;
-            else strcat(sourcepath, file->d_name);
-        }
-        cout << "pack" << sourcepath << " to " << packpath << endl;
-        pack(sourcepath, packpath);
-        parentpath = sourcepath;
+        pack((char*)remotePath.c_str(), packpath);
+        parentpath = remotePath;
         packpathforpass = packpath;
 
         delete [] packpath;
-        delete []  sourcepath;
 
         string order = "rm -rf " + parentpath;
         cout << order << endl;
         system(order.c_str());
+
+        remotePath = packpathforpass;
     }
 
     if(isPass) {
@@ -168,29 +170,35 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         char* packpath = new char[MAX_PATH];
         strcpy(packpath, packpathforpass.c_str());
 
+        char* passpath = new char[MAX_PATH];
+        strcpy(passpath, newpasspath.c_str());
+
+        char* pass = new char[MAX_PATH];
+        strcpy(pass, Password.toStdString().c_str());
+
         cout << "pass" << packpath << " to " << newpasspath << endl;
-        code(packpath, (char*)newpasspath.c_str(), (char*)Password.toStdString().c_str());
+        code(packpath, passpath, pass);
 
         string order = "rm -rf " + packpathforpass;
         cout << order << endl;
         system(order.c_str());
 
+        remotePath = packpath;
+
         delete[] packpath;
+        delete[] passpath;
+        delete[] pass;
     }
 
     // Server
     if(isRemote) {
-//        Client c("127.0.0.1");
-//        c.request_service("backup " + pathto);
+        Client c("127.0.0.1");
+        cout << "backup " << remotePath << " to the server" << endl;
+        c.backup(remotePath);
+//         c.monitor();
 
-////        -fileSystem fileManager;
-//        int fileno;
-//        string files[100];
-////        fileManager.getAllFiles(pathfrom.c_str(), &fileno, files);
-//        for(int i = 0; i < fileno; i++)
-//        {
-//            c.send_file(files[i]);
-//        }
+        string order = "rm -rf " + remotePath;
+        system(order.c_str());
     }
 
 

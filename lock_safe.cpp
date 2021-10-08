@@ -4,39 +4,17 @@
 
 int FileConvert(char szOldFile[],char szNewFile[])
 {
-    FILE *pOldFile=NULL;
-    FILE *pNewFile=NULL;//指针初始化为NULL
-    char cTemp;
+    FILE *pOldFile=fopen(szOldFile,"rb");
+    FILE *pNewFile=fopen(szNewFile,"wb");//指针初始化为NULL
+    int cTemp;
 
-    if(szOldFile==NULL||szNewFile==NULL)
+    while((cTemp = fgetc(pOldFile)) != EOF)//遇到文件结束 返回值为0
     {
-        return ERR;
-    }
-
-    pOldFile=fopen(szOldFile,"rb");//二进制读写文件
-    if(pOldFile==NULL)
-    {
-        return ERR;
-    }
-
-    pNewFile=fopen(szNewFile,"wb");
-    if(pNewFile==NULL)
-    {
-        fclose(pOldFile);
-        return ERR;
-    }
-    //一定要先读取字符然后做文件末尾判断
-    cTemp=fgetc(pOldFile);
-    while(!feof(pOldFile))//遇到文件结束 返回值为0
-    {
-//        putchar(cTemp);
-        fputc(cTemp,pNewFile);
-        cTemp=fgetc(pOldFile)^KEY;//异或运算加密文件
-
+        fputc(cTemp^KEY,pNewFile);
+        // every char in this file will be unknowned because we ^ it
     }
     fclose(pOldFile);
     fclose(pNewFile);//用完文件之后需要关闭文件
-
     return OK;
 }
 
@@ -49,28 +27,23 @@ long GetFileSize(FILE *pf)
 
 //ping jie
 void pJ(char str[],char inFile[],char outFile[]){
-    for(int i=0;i<strlen(str);i++){
+
+    // it must be 32 because he write this to file
+    for(int i=0;i < 32;i++){
         str[i]=str[i]^KEY;
     }
     char pd[32]={'s'};
-    for(int i=0;i<strlen(pd);i++){
+    for(int i=0;i < 32;i++){
         pd[i]=pd[i]^KEY;
     }
 
-
-    FILE *pWorkFile1 = NULL;
-    pWorkFile1 = fopen(inFile,"rb");
-    long  len=GetFileSize(pWorkFile1);
-    fclose(pWorkFile1);
-    FILE *pOutFile = NULL;
-    FILE *pWorkFile = NULL;
-    pWorkFile = fopen(inFile,"rb");
-    pOutFile = fopen(outFile,"wb");
+    FILE *pOutFile = fopen(outFile,"wb");
+    FILE *pWorkFile = fopen(inFile,"rb");
+    long  len=GetFileSize(pWorkFile);
     fwrite(str,32,1,pOutFile);
     fwrite(pd,32,1,pOutFile);
 
-    unsigned char *pTmpData = NULL;
-    pTmpData = new unsigned char[len];
+    unsigned char *pTmpData = new unsigned char[len];
     fread(pTmpData,len,1,pWorkFile);
     fwrite(pTmpData,len,1,pOutFile);
 
@@ -118,13 +91,12 @@ int cF(char str[],char inFile[],char outFile[]){
 int code(char szOldFile[],char szNewFile[],char code[]){
 
     char* s1=szOldFile;
-    char s2[strlen(s1)+1];
+    char s2[strlen(s1) + 1];
     strcpy(s2, s1);
     strcat(s2, "1");
     FileConvert( szOldFile, s2);
     pJ(code,s2,szNewFile);
     remove(s2);
-
     return 0;
 }
 

@@ -111,7 +111,7 @@ void Dialog_restore::on_pushButton_5_clicked()
         delete[] unpasspath, packname;
 
         cout << "unpass " << fileManager.fileList[0] << " to " << pwfordecrypt.toStdString() << endl;
-        bool res = decode(const_cast<char*>(fileManager.fileList[0].c_str()), const_cast<char*> (unpasspath), (char*)pwfordecrypt.toStdString().c_str());
+        bool res = decode((char *)fileManager.fileList[0].c_str(), (char*)unpasspath, (char*)pwfordecrypt.toStdString().c_str());
 //        std::cout << res;
         if(res) {
             strcpy(order, "rm -rf ");
@@ -152,4 +152,10 @@ void Dialog_restore::on_pushButton_5_clicked()
         cout << "uncompress " << named << endl;
         compressManager.uncompressFile(named);
     }
+
+
+//    if(isRemote) {
+//        // remote restore
+
+//    }
 }
