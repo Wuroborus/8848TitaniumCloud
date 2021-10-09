@@ -102,18 +102,18 @@ int code(char szOldFile[],char szNewFile[],char code[]){
 
 
 
-int decode(char szOldFile[],char szNewFile[],char code[]){
+bool decode(char szOldFile[],char szNewFile[],char code[]){
     printf("++++++++++++++++++++++++++");//bu neng shan
     char s2[strlen(szOldFile)+1];
     for(int i=0;i<strlen(szOldFile);i++){
         s2[i]=szOldFile[i];
     }
     s2[strlen(szOldFile)]='1';
-    if( cF(code,szOldFile,s2)<0) return -1;;
+    if( cF(code,szOldFile,s2)<0) return false;;
     FileConvert( s2, szNewFile);
     remove(s2);
 
-    return 0;
+    return true;
 }
 bool isCoded(char src[]){
 
