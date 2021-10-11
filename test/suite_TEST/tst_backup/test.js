@@ -21,6 +21,17 @@ function compress() {
 function pack() {
     clickButton(waitForObject(names.dialogBackupCheckBoxQCheckBox));
     type(waitForObject(names.dialogPacknameLineEditQLineEdit), "cdc");
+    clickButton(waitForObject(names.dialogPacknamePushButtonQPushButton));
+}
+
+function unpackandpass() {
+    mouseClick(waitForObject(names.dialogPasswordLineEditQLineEdit), 41, 6, Qt.NoModifier, Qt.LeftButton);
+    type(waitForObject(names.dialogPasswordLineEditQLineEdit), "123456");
+    mouseClick(waitForObject(names.dialogPasswordLineEdit2QLineEdit), 57, 17, Qt.NoModifier, Qt.LeftButton);
+    type(waitForObject(names.dialogPasswordLineEdit2QLineEdit), "123456");
+    clickButton(waitForObject(names.dialogPasswordPushButtonQPushButton));
+    type(waitForObject(names.dialogPacknameLineEditQLineEdit), "cdc");
+    clickButton(waitForObject(names.dialogPacknamePushButtonQPushButton));
 }
 
 function pass() {
@@ -29,19 +40,11 @@ function pass() {
     mouseClick(waitForObject(names.dialogPasswordLineEdit2QLineEdit), 57, 17, Qt.NoModifier, Qt.LeftButton);
     type(waitForObject(names.dialogPasswordLineEdit2QLineEdit), "123456");
     clickButton(waitForObject(names.dialogPasswordPushButtonQPushButton));
-    type(waitForObject(names.dialogPacknameLineEditQLineEdit), "cdc");
-    clickButton(waitForObject(names.dialogPacknamePushButtonQPushButton));
-    
 }
 
 function main() {
     clickButton(waitForObject(names.mainWindowPushButtonQPushButton));
     choosePath();
-    for(i = 0; i < 10; i++) {
-        clickButton(waitForObject(names.dialogBackupPushButton5QPushButton)); // backup
-        clickButton(waitForObject(names.dialogSuccessPushButtonQPushButton)); // close success
-    }
-    compress();
     for(i = 0; i < 10; i++) {
         clickButton(waitForObject(names.dialogBackupPushButton5QPushButton)); // backup
         clickButton(waitForObject(names.dialogSuccessPushButtonQPushButton)); // close success
@@ -52,6 +55,11 @@ function main() {
         clickButton(waitForObject(names.dialogSuccessPushButtonQPushButton)); // close success
     }
     pass();
+    for(i = 0; i < 10; i++) {
+        clickButton(waitForObject(names.dialogBackupPushButton5QPushButton)); // backup
+        clickButton(waitForObject(names.dialogSuccessPushButtonQPushButton)); // close success
+    }
+    compress();
     for(i = 0; i < 10; i++) {
         clickButton(waitForObject(names.dialogBackupPushButton5QPushButton)); // backup
         clickButton(waitForObject(names.dialogSuccessPushButtonQPushButton)); // close success
