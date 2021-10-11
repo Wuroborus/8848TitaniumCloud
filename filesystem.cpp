@@ -56,6 +56,7 @@ bool fileSystem::getFileType()
         inodeList[i] = buf.st_ino;
         linkList[i] = buf.st_nlink;
     }
+    return true;
 }
 
 bool fileSystem::getFileList(const char* path)

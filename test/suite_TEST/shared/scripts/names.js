@@ -35,3 +35,6 @@ export var dialogRestoreDialogRestore = {"name": "Dialog_restore", "type": "Dial
 export var dialogRestorePushButtonQPushButton = {"name": "pushButton", "type": "QPushButton", "visible": 1, "window": dialogRestoreDialogRestore};
 export var dialogRestorePushButton2QPushButton = {"name": "pushButton_2", "type": "QPushButton", "visible": 1, "window": dialogRestoreDialogRestore};
 export var dialogRestorePushButton5QPushButton = {"name": "pushButton_5", "type": "QPushButton", "visible": 1, "window": dialogRestoreDialogRestore};
+export var qFileDialogFileNameLabelQLabel = {"name": "fileNameLabel", "type": "QLabel", "visible": 1, "window": qFileDialogQFileDialog};
+export var fileNameEditQLineEdit = {"buddy": qFileDialogFileNameLabelQLabel, "name": "fileNameEdit", "type": "QLineEdit", "visible": 1};
+export var mainWindowCentralWidgetQWidget = {"name": "centralWidget", "type": "QWidget", "visible": 1, "window": mainWindowMainWindow};
