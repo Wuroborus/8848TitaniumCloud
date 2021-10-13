@@ -74,7 +74,7 @@ void Client::backup(const std::string& source) {
             struct stat st;
 
             if(!(d = opendir(source.c_str()))) {
-                std::cerr << "[ERROR] Error in opening directory: " << strerror(errno) << std::endl;
+                std::cerr << "[ERROR] Error in opening directory: " << std::strerror(errno) << std::endl;
             }
             while((dp = readdir(d)) != NULL) {
                 if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
@@ -97,10 +97,9 @@ void Client::backup(const std::string& source) {
             }
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
     }
 }
-
 
 void Client::receive_file(const std::string& filepath) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -141,10 +140,9 @@ void Client::monitor(const std::string& source) {
             sleep(5);
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " <<strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
     }
 }
-
 
 char Client::exist(const std::string& filepath) {
     request_service("exist " + filepath);
@@ -163,4 +161,8 @@ char Client::exist(const std::string& filepath) {
     char buffer = {0};
     recv(sockfd, &buffer, SIZE, 0);
     return buffer;
+}
+
+void Client::operator()(const std::string &source) {
+    this->monitor(source);
 }

@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <thread>
 #define SIZE 1024
 
 
@@ -17,6 +18,8 @@ private:
     int sockfd;
     struct sockaddr_in server_addr;
     socklen_t addr_size;
+
+    void monitor(const std::string& source);
 
 public:
     Client(char *server_ip);
@@ -29,8 +32,8 @@ public:
     void service();
 
     void create_dir(const std::string &dirpath);
-    void monitor(const std::string& source);
     char exist(const std::string& filepath);
+    void operator()(const std::string& source); // 重载()操作符，用于分离线程
 };
 
 
