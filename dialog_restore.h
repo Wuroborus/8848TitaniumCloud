@@ -29,6 +29,8 @@ private slots:
 
 
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::Dialog_restore *ui;
     Dialog_PwForDecrypt* dialog_pwfordecrypt;
