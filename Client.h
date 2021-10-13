@@ -18,6 +18,7 @@ private:
     struct sockaddr_in server_addr;
     socklen_t addr_size;
 
+
 public:
     Client(char *server_ip);
     void request_service(const std::string& service);
