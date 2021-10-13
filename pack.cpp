@@ -127,11 +127,11 @@ void  MyCab::SetOutPutFile(char * OutFile)
 }
 
 //获取文件大小(传入以二进制方式打开的文件指针)
-long MyCab:: GetFileSize(FILE *pf)
+long MyCab:: GetFileSize(char* filename)
 {
-    //指针移到文件尾
-    fseek(pf,0,/*SEEK_END*/ 2);
-    return ftell(pf);
+    struct stat statbuf;
+    stat(filename,&statbuf);
+    return statbuf.st_size;
 }
 
 //制作打包文件
@@ -160,7 +160,7 @@ void MyCab:: DoMakeCAB()
             cout<<"文件:"<<fh.FileName[i]<<"无法读取["<<strerror(errno)<<"]"<<endl;
             return;
         }
-        fh.FileLen[i] = GetFileSize(pWorkFile);
+        fh.FileLen[i] = GetFileSize(fh.FileName[i]);
         fclose(pWorkFile);
     }
 

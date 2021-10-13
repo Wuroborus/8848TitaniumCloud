@@ -7,10 +7,22 @@ int FileConvert(char szOldFile[],char szNewFile[])
     FILE *pOldFile=fopen(szOldFile,"rb");
     FILE *pNewFile=fopen(szNewFile,"wb");//指针初始化为NULL
     int cTemp;
+//    int key;
+    int tag = 1;
 
     while((cTemp = fgetc(pOldFile)) != EOF)//遇到文件结束 返回值为0
     {
+//        cout << cTemp;
+        if(tag == 1 && cTemp == 0) {
+            cout << "pack is broken" << endl;
+            exit(-1);
+        }
+        tag = 0;
+
         fputc(cTemp^KEY,pNewFile);
+
+//        int key = cTemp ^ KEY;
+//        cout << key;
         // every char in this file will be unknowned because we ^ it
     }
     fclose(pOldFile);
@@ -18,11 +30,11 @@ int FileConvert(char szOldFile[],char szNewFile[])
     return OK;
 }
 
-long GetFileSize(FILE *pf)
+long GetFileSize(char* filename)
 {
-    //指针移到文件尾
-    fseek(pf,0,/*SEEK_END*/ 2);
-    return ftell(pf);
+    struct stat statbuf;
+    stat(filename,&statbuf);
+    return statbuf.st_size;
 }
 
 //ping jie
@@ -39,7 +51,7 @@ void pJ(char str[],char inFile[],char outFile[]){
 
     FILE *pOutFile = fopen(outFile,"wb");
     FILE *pWorkFile = fopen(inFile,"rb");
-    long  len=GetFileSize(pWorkFile);
+    long len=GetFileSize(inFile);
     fwrite(str,32,1,pOutFile);
     fwrite(pd,32,1,pOutFile);
 
@@ -58,7 +70,8 @@ int cF(char str[],char inFile[],char outFile[]){
 
     FILE *pCAB1 = NULL;
     pCAB1 = fopen(inFile,"rb");
-    long all=GetFileSize(pCAB1);
+    long all=GetFileSize(inFile);
+
     fclose(pCAB1);
     char s[32];//mi ma
     char s1[32];
@@ -74,13 +87,17 @@ int cF(char str[],char inFile[],char outFile[]){
     }
     unsigned char *pTmpData = NULL;
     pTmpData = new unsigned char[all-64];
-    fread(pTmpData,all-64,1,pCAB);
-    for(int i=0;i<strlen(str) ;i++){
-        if(str[i]!=s[i] || s[i] == '\0'){
-            printf("password error");
-            return -1;
-        }
+
+    int res = fread(pTmpData,all-64,1,pCAB);
+    if(res != 1) {
+        cout << "read error" << endl;
     }
+
+    if(strcmp(str, s)) {
+        cout << "pass error" << endl;
+        return -1;
+    }
+
     pWork = fopen(outFile,"wb");
     fwrite(pTmpData,all-64,1,pWork);
     fclose(pWork);
@@ -102,18 +119,18 @@ int code(char szOldFile[],char szNewFile[],char code[]){
 
 
 
-int decode(char szOldFile[],char szNewFile[],char code[]){
+bool decode(char szOldFile[],char szNewFile[],char code[]){
     printf("++++++++++++++++++++++++++");//bu neng shan
     char s2[strlen(szOldFile)+1];
     for(int i=0;i<strlen(szOldFile);i++){
         s2[i]=szOldFile[i];
     }
     s2[strlen(szOldFile)]='1';
-    if( cF(code,szOldFile,s2)<0) return -1;;
+    if( cF(code,szOldFile,s2)<0) return false;;
     FileConvert( s2, szNewFile);
     remove(s2);
 
-    return 0;
+    return true;
 }
 bool isCoded(char src[]){
 

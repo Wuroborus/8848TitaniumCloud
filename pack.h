@@ -43,7 +43,7 @@ public:
     MyCab();
     void AddFile(char * FilePathName);
     void SetOutPutFile(char * OutFile);
-    long GetFileSize(FILE *pf);
+    long GetFileSize(char* filename);
     void DoMakeCAB();
     void DoUnCAB(char *CabFilePathName,char *dest);
 
