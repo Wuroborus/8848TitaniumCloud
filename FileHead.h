@@ -8,7 +8,7 @@
 struct FileHead
 {
     unsigned int FileCount;//文件个数
-    unsigned int FileLen[MAX_FILE_COUNT];//文件大小
+    long FileLen[MAX_FILE_COUNT];//文件大小
     char FileName[MAX_FILE_COUNT][MAX_PATH];//文件名
     char src[MAX_PATH];//待打包 的文件夹路径
 };

@@ -3,7 +3,10 @@
 
 #include <iostream>
 #include <string.h>
+#include <cstdlib>
 #include <stdlib.h>
+#include <sys/stat.h>
+
 using namespace std;
 #define OK 0
 #define ERR -1
@@ -13,7 +16,7 @@ using namespace std;
 
 
 int FileConvert(char szOldFile[],char szNewFile[]);
-long GetFileSize(FILE *pf);
+long GetFileSize(char* filename);
 void pJ(char str[],char inFile[],char outFile[]);
 
 //chai fen
