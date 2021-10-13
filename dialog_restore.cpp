@@ -162,5 +162,6 @@ void Dialog_restore::on_pushButton_5_clicked()
 
 void Dialog_restore::on_pushButton_3_clicked()
 {
-
+    filePathReFrom = QFileDialog::getExistingDirectory();
+    ui->backReFrom->setText(filePathReFrom);
 }
