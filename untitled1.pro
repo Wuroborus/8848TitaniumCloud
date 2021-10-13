@@ -45,7 +45,8 @@ SOURCES += \
     filesystem.cpp \
     Client.cpp \
     pack.cpp \
-    lock_safe.cpp
+    lock_safe.cpp \
+    dialog_realtime.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     Client.h \
     pack.h \
     lock_safe.h \
-    FileHead.h
+    FileHead.h \
+    dialog_realtime.h
 
 FORMS += \
         mainwindow.ui \
@@ -74,7 +76,8 @@ FORMS += \
     dialog_pwfordecrypt.ui \
     dialog_compare.ui \
     dialog_compare_result.ui \
-    dialog_success.ui
+    dialog_success.ui \
+    dialog_realtime.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

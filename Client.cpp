@@ -74,7 +74,7 @@ void Client::backup(const std::string& source) {
             struct stat st;
 
             if(!(d = opendir(source.c_str()))) {
-                std::cerr << "[ERROR] Error in opening directory: " << std::strerror(errno) << std::endl;
+                std::cerr << "[ERROR] Error in opening directory: " << strerror(errno) << std::endl;
             }
             while((dp = readdir(d)) != NULL) {
                 if((!strncmp(dp->d_name, ".", 1)) || (!strncmp(dp->d_name, "..", 2)))
@@ -97,7 +97,7 @@ void Client::backup(const std::string& source) {
             }
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " << strerror(errno) << std::endl;
     }
 }
 
@@ -140,7 +140,7 @@ void Client::monitor(const std::string& source) {
             sleep(5);
         }
     } else {
-        std::cerr << "[ERROR] Cannot access " << source << ": " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Cannot access " << source << ": " << strerror(errno) << std::endl;
     }
 }
 

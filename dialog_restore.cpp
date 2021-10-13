@@ -81,15 +81,36 @@ void Dialog_restore::on_pushButton_5_clicked()
     strcat(order,named);
     system(order);
 
-    memset(order,0,100);
-    strcpy(order,"cp -a ");
-    strcat(order,constcpathfrom);
-    strcat(order," ");
-    strcat(order,named);
-    system(order);
+
+    // if there is a package, cp file except directory
+    fileSystem fileManager0(constcpathfrom);
+    int suffixNo = fileManager0.fileList[0].find_last_of('.');
+    string suffixStr0;
+    if(suffixNo == -1) {
+        // no suffix
+        suffixStr0 = "";
+    }
+    else suffixStr0 = fileManager0.fileList[0].substr(fileManager0.fileList[0].find_last_of('.'));
+
+    if(suffixStr0.compare(".8848pass") && suffixStr0.compare(".8848pack")) {
+        // directory
+        string order = "cp -a " + pathfrom + " " + named;
+        system(order.c_str());
+        cout << order << endl;
+    }
+    else {
+        string order = "cp -a " + fileManager0.fileList[0] + " " + named;
+        system (order.c_str());
+        cout << order << endl;
+    }
 
     fileSystem fileManager(named);
-    string suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+    suffixNo = fileManager.fileList[0].find_last_of('.');
+    string suffixStr;
+    if(suffixNo == -1) {
+        suffixStr = "";
+    }
+    else suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
 
     if(fileManager.fileList.size() == 1 && !suffixStr.compare(".8848pass")) {
         cout << "unpass........." << endl;
@@ -108,21 +129,26 @@ void Dialog_restore::on_pushButton_5_clicked()
         packname[length] = '\0';
         strcat(unpasspath, packname);
 
-        delete[] unpasspath, packname;
 
-        cout << "unpass " << fileManager.fileList[0] << " to " << pwfordecrypt.toStdString() << endl;
+
+        cout << "unpass " << fileManager.fileList[0] << " to " << unpasspath << " with password : " << pwfordecrypt.toStdString() << endl;
         bool res = decode((char *)fileManager.fileList[0].c_str(), (char*)unpasspath, (char*)pwfordecrypt.toStdString().c_str());
-//        std::cout << res;
+
+        delete[] unpasspath, packname;
         if(res) {
             strcpy(order, "rm -rf ");
             strcat(order, fileManager.fileList[0].c_str());
             system(order);
-
+            cout << order << endl;
         }
     }
 
     fileManager.getFileList(named);
-    suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+     suffixNo = fileManager.fileList[0].find_last_of('.');
+    if(suffixNo == -1) {
+        suffixStr = "";
+    }
+    else suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
 
     if(fileManager.fileList.size() == 1 && !suffixStr.compare(".8848pack")) {
         cout << "unpack........." << endl;
@@ -130,8 +156,8 @@ void Dialog_restore::on_pushButton_5_clicked()
         string dirName = pathfrom.substr(index, pathfrom.back());
         char* unpackpath = new char[200];
         strcpy(unpackpath, named);
-        strcat(unpackpath, "/");
-        strcat(unpackpath, dirName.c_str());
+//        strcat(unpackpath, "/");
+//        strcat(unpackpath, dirName.c_str());
 
         cout << "unpack " << fileManager.fileList[0] << " to " << unpackpath << endl;
         unpack((char*)fileManager.fileList[0].c_str(), unpackpath);
@@ -143,7 +169,13 @@ void Dialog_restore::on_pushButton_5_clicked()
 
 
     fileManager.getFileList(named);
-    suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+    suffixNo = fileManager.fileList[0].find_last_of('.');
+    if(suffixNo == -1) {
+        suffixStr = "";
+    }
+    else suffixStr = fileManager.fileList[0].substr(fileManager.fileList[0].find_last_of('.'));
+
+
     cout << "suffix is : " << suffixStr << endl;
     if(!suffixStr.compare(".8848com")) {
         cout << "suffix is: " << suffixStr << " uncompress........." << endl;
@@ -164,4 +196,5 @@ void Dialog_restore::on_pushButton_3_clicked()
 {
     filePathReFrom = QFileDialog::getExistingDirectory();
     ui->backReFrom->setText(filePathReFrom);
+
 }
