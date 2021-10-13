@@ -5,6 +5,7 @@
 #include <dialog_password.h>
 #include <dialog_packname.h>
 #include <dialog_success.h>
+#include <dialog_realtime.h>
 
 namespace Ui {
 class Dialog_backup;
@@ -40,11 +41,17 @@ private slots:
 
     void on_checkBox_4_stateChanged(int arg1);
 
+    void getclose(int);
+
+
+    void on_checkBox_5_stateChanged(int arg1);
+
 private:
     Ui::Dialog_backup *ui;
     Dialog_password* dialog_password;
     Dialog_packname* dialog_packname;
     Dialog_success* dialog_success;
+    Dialog_RealTime *dialog_realtime;
     QString filePathFrom;
     QString filePathTo;
     QString Password;
@@ -54,6 +61,9 @@ private:
     bool isPack = false;
     bool isPass = false;
     bool isRemote = false;
+    bool isincrement = false;
+    bool isrealtime = false;
+    int ifclose = 1;
 };
 
 #endif // DIALOG_BACKUP_H

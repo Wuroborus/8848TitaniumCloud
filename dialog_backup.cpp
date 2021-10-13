@@ -90,7 +90,7 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
     for(int i = 0;i<=99;i++)
     {
         strcpy(named,constcpathto);
-        strcat(named,"/back_up_");
+        strcat(named,"/8848back_up_");
         strcat(named,std::to_string(i).c_str());
         if(opendir(named))
         {
@@ -195,8 +195,13 @@ void Dialog_backup::on_pushButton_5_clicked()//备份操作
         Client c("127.0.0.1");
         cout << "backup " << remotePath << " to the server" << endl;
         c.backup(remotePath);
+        if(isrealtime){
+        dialog_realtime = new Dialog_RealTime(this);
+        dialog_realtime->setModal(true);
+        QObject::connect(dialog_realtime,SIGNAL(sendclose(int)),this,SLOT(getclose(int)));
 //         c.monitor();
-
+        dialog_realtime->show();
+}
         string order = "rm -rf " + remotePath;
         system(order.c_str());
     }
@@ -239,15 +244,43 @@ void Dialog_backup::on_checkBox_2_stateChanged(int arg1)
     }
 }
 
+//void Dialog_backup::on_checkBox_4_stateChanged(int arg1)
+//{
+//    // remote or local
+//    if(arg1) {
+//        isRemote = true;
+//         ui->pushButton_2->setEnabled(false);
+//    }
+//    else {
+//        isRemote = false;
+//        ui->pushButton_2->setEnabled(true);
+//    }
+//}
+
 void Dialog_backup::on_checkBox_4_stateChanged(int arg1)
 {
-    // remote or local
-    if(arg1) {
-        isRemote = true;
-         ui->pushButton_2->setEnabled(false);
+    if(arg1)
+    {
+        isincrement = true;
     }
     else {
-        isRemote = false;
-        ui->pushButton_2->setEnabled(true);
+        isincrement = false;
+    }
+}
+
+
+void Dialog_backup::getclose(int CLOSE)
+{
+    ifclose = CLOSE;
+}
+
+void Dialog_backup::on_checkBox_5_stateChanged(int arg1)
+{
+    if(arg1)
+    {
+        isrealtime = true;
+    }
+    else {
+        isrealtime = false;
     }
 }
