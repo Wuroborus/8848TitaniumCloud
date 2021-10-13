@@ -284,3 +284,9 @@ void Dialog_backup::on_checkBox_5_stateChanged(int arg1)
         isrealtime = false;
     }
 }
+
+void Dialog_backup::on_pushButton_3_clicked()
+{
+    filePathTo = QFileDialog::getExistingDirectory();
+    ui->backTo->setText(filePathTo);
+}

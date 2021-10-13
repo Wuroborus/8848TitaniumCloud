@@ -46,6 +46,8 @@ private slots:
 
     void on_checkBox_5_stateChanged(int arg1);
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::Dialog_backup *ui;
     Dialog_password* dialog_password;
