@@ -23,6 +23,4 @@ int cF(char str[],char inFile[],char outFile[]);
 int code(char szOldFile[],char szNewFile[],char code[]);
 bool decode(char szOldFile[],char szNewFile[],char code[]);
 
-bool isCoded(char src[]);
-
 #endif // CODE_H

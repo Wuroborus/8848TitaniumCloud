@@ -54,10 +54,7 @@ void pJ(char str[],char inFile[],char outFile[]){
 
 //chai fen
 int cF(char str[],char inFile[],char outFile[]){
-
-
-    FILE *pCAB1 = NULL;
-    pCAB1 = fopen(inFile,"rb");
+    FILE *pCAB1 = fopen(inFile,"rb");
     long all=GetFileSize(pCAB1);
     fclose(pCAB1);
     char s[32];//mi ma
@@ -72,15 +69,14 @@ int cF(char str[],char inFile[],char outFile[]){
     for(int i=0;i<32;i++){
         s[i]=s[i]^KEY;
     }
-    unsigned char *pTmpData = NULL;
-    pTmpData = new unsigned char[all-64];
-    fread(pTmpData,all-64,1,pCAB);
     for(int i=0;i<strlen(str) ;i++){
         if(str[i]!=s[i] || s[i] == '\0'){
             printf("password error");
             return -1;
         }
     }
+    unsigned char *pTmpData = new unsigned char[all-64];
+    fread(pTmpData,all-64,1,pCAB);
     pWork = fopen(outFile,"wb");
     fwrite(pTmpData,all-64,1,pWork);
     fclose(pWork);
@@ -92,7 +88,7 @@ int code(char szOldFile[],char szNewFile[],char code[]){
 
     char* s1=szOldFile;
     char s2[strlen(s1) + 1];
-    strcpy(s2, s1);
+    strcpy(s2, szOldFile);
     strcat(s2, "1");
     FileConvert( szOldFile, s2);
     pJ(code,s2,szNewFile);
@@ -103,83 +99,12 @@ int code(char szOldFile[],char szNewFile[],char code[]){
 
 
 bool decode(char szOldFile[],char szNewFile[],char code[]){
-    printf("++++++++++++++++++++++++++");//bu neng shan
     char s2[strlen(szOldFile)+1];
-    for(int i=0;i<strlen(szOldFile);i++){
-        s2[i]=szOldFile[i];
-    }
-    s2[strlen(szOldFile)]='1';
+    strcpy(s2, szOldFile);
+    strcat(s2, "1");
     if( cF(code,szOldFile,s2)<0) return false;;
     FileConvert( s2, szNewFile);
     remove(s2);
 
     return true;
 }
-bool isCoded(char src[]){
-
-    FILE *pCAB = NULL;
-    pCAB = fopen(src,"rb");
-    char pd[32]={'s'};
-    for(int i=0;i<32;i++){
-        pd[i]=pd[i]^KEY;
-    }
-    char pd1[32];
-    char pd2[32];
-
-
-    fread(pd1,32,1,pCAB);
-    fread(pd2,32,1,pCAB);
-
-    for(int i=0;i<32;i++){
-        if(pd2[i]!=pd[i]){
-            printf("fei jia mi------------");
-            return false;
-        }
-
-    }
-    printf("jia mi-------------");
-
-    return true;
-
-
-}
-
-
-
-
-
-
-
-//int main(int argc, char* argv[]) {
-//    char s1[200];
-//    char s2[200];
-//    char s_code[32];
-//    cout<<"文件1：";
-//    cin>>s1;
-//    cout<<"文件2：";
-//    cin>>s2;
-//    cout<<"password:";
-//    cin>>s_code;
-//    int n;
-//    cout<<"1：加密  2：解密  ";
-//    cin>>n;
-//    if(n==1){
-//        code(s1, s2, s_code);//source dest code
-//    }
-
-//    else{
-//         decode(s1, s2, s_code);//source dest code
-//    }
-
-
-
-
-
-//    return 0;
-//}
-
-
-
-
-
-

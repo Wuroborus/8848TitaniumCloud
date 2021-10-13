@@ -62,7 +62,8 @@ HEADERS += \
     filesystem.h \
     Client.h \
     pack.h \
-    lock_safe.h
+    lock_safe.h \
+    FileHead.h
 
 FORMS += \
         mainwindow.ui \

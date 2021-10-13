@@ -88,7 +88,7 @@ unsigned char HuffmanTree::getOchar(const int num) {
     if (arrayTree[num].lchild == -1) {          // 根据其为满二叉树的特性只判断左子树即可
         return arrayTree[num].it; //叶结点对应字节
     }
-    getOchar(arrayTree[num].lchild);
+    return getOchar(arrayTree[num].lchild);
 }
 
 /*run函数的实现*/

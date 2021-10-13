@@ -1,7 +1,5 @@
 #include "pack.h"
 
-
-
 void strmncpy(char *s, int m, int n, char *t)
 {
 
@@ -45,61 +43,6 @@ void path (char FN[],char * root,char* tem_src,char* tmpDirName) {
 
 }
 
-int  list_dir_name(char* dirname,string names[MAX_FILE_COUNT], int tabs=0)
-{
-    DIR* dp;
-    struct dirent* dirp;
-    struct stat st;
-    char tab[tabs + 1];
-    if((dp = opendir(dirname)) == NULL)
-    {
-        perror("opendir");
-        return -1;
-    }
-
-    memset(tab, '\t', tabs);
-    tab[tabs] = 0;
-    while((dirp = readdir(dp)) != NULL)
-    {
-        char fullname[MAX_PATH];
-        memset(fullname, 0, sizeof(fullname));
-        if(dirp->d_name[0] == '.')
-            continue;
-
-        strncpy(fullname, dirname, sizeof(fullname));
-        strncat(fullname, "/", sizeof(fullname));
-        strncat(fullname, dirp->d_name, sizeof(fullname));
-        if(stat(fullname, &st) == -1)
-        {
-            perror("stat");
-            fputs(fullname, stderr);
-            return -1;
-        }
-        if(S_ISREG(st.st_mode)){  //copy full_name
-            for(int i=0;i<MAX_FILE_COUNT;i++)
-            {
-                if(names[0]==""){
-                    names[0]=fullname;
-                    break;
-                }
-                if(names[i]!=""&&names[i+1]==""){
-                    names[i+1]=fullname;
-                    break;
-                }
-
-                if(names[i]==""&&names[i+1]==""){
-                    break;
-                }
-            }
-
-        }
-        if(S_ISDIR(st.st_mode) && list_dir_name(fullname, names,tabs + 1) == -1)
-            return -1;
-    }
-    return 0;
-}
-
-
 MyCab::MyCab()
 {
     memset(&fh,0x0,sizeof(fh));
@@ -142,31 +85,9 @@ void MyCab:: DoMakeCAB()
         cout<<"没有文件添加到打包"<<endl;
         return;
     }
-    if ( strlen(ObjectFilePathName) < 1 )
-    {
-        cout<<"没有指定打包文件输出位置"<<endl;
-        return;
-    }
 
-    FILE *pOutFile = NULL;
-    FILE *pWorkFile = NULL;
-
-    //获取所有文件大小
-    for ( int i = 0 ; i < fh.FileCount ; i++ )
-    {
-        pWorkFile = fopen(fh.FileName[i],"rb");
-        if ( NULL == pWorkFile )
-        {
-            cout<<"文件:"<<fh.FileName[i]<<"无法读取["<<strerror(errno)<<"]"<<endl;
-            return;
-        }
-        fh.FileLen[i] = GetFileSize(pWorkFile);
-        fclose(pWorkFile);
-    }
-
-    //开始合并写文件
-    pOutFile = fopen(ObjectFilePathName,"wb");
-    if ( NULL == pOutFile )
+    FILE *pOutFile = fopen(ObjectFilePathName,"wb");
+    if ( !pOutFile )
     {
         cout<<"输出文件创建失败["<<strerror(errno)<<"]"<<endl;
         return;
@@ -174,6 +95,7 @@ void MyCab:: DoMakeCAB()
 
     //写入文件头
     fwrite(&fh,sizeof(fh),1,pOutFile);
+    FILE *pWorkFile = NULL;
     //写入各文件
     for ( int i = 0 ; i < fh.FileCount ; i++ )
     {
@@ -186,6 +108,7 @@ void MyCab:: DoMakeCAB()
             fclose(pOutFile);
             return;
         }
+        fh.FileLen[i] = GetFileSize(pWorkFile);
         pTmpData = new unsigned char[fh.FileLen[i]];
         fread(pTmpData,fh.FileLen[i],1,pWorkFile);
         if ( ferror(pWorkFile) )
@@ -214,18 +137,13 @@ void MyCab:: DoMakeCAB()
 //解包
 void  MyCab::DoUnCAB(char *CabFilePathName,char *dest)
 {
-    FILE *pCAB = NULL;
+    FILE *pCAB = fopen(CabFilePathName,"rb");
     FILE *pWork = NULL;
-    pCAB = fopen(CabFilePathName,"rb");
-    //读文件头
 
-    memset(&fh,0x0,sizeof(fh));
+    //读文件头
     fread(&fh,sizeof(fh),1,pCAB);
 
-
     printCAB();
-    //解包单文件
-
 
     bool fl=false;
     for(int i=0;i<MAX_PATH;i++){
@@ -361,44 +279,24 @@ void pack(char* src,char* dest){
     //设置输出文件
     mc.SetOutPutFile(dest);
 
-    struct stat state_of_entry;
-    lstat(src, &state_of_entry);
 
+    strcpy(mc.fh.src,src);
 
-
-    if (S_ISDIR(state_of_entry.st_mode)) //如果要复制的是文件夹
-    {
-//            mc.fh.src=src;
-        strcpy(mc.fh.src,src);
-
-        fileSystem fileManager(src);
-        for(auto file : fileManager.fileList) {
-            mc.AddFile((char*)file.c_str());
-        }
-
-        mc.DoMakeCAB();
-
+    fileSystem fileManager(src);
+    for(auto file : fileManager.fileList) {
+        mc.AddFile((char*)file.c_str());
     }
 
-    else{
-        for(int i=0;i<MAX_PATH;i++){
-            mc.fh.src[i]=0;
-        }
-
-        //添加要打包的文件
-        mc.AddFile(src);
-        mc.DoMakeCAB();
-
-    }
+    mc.DoMakeCAB();
 }
 
-void unpack(char* src,char* dest){
+bool unpack(char* src,char* dest){
 
     MyCab umc;
     //执行解包
 
     umc.DoUnCAB(src,dest);
-
+    return true;
 
 }
 

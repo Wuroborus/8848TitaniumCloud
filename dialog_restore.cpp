@@ -156,8 +156,6 @@ void Dialog_restore::on_pushButton_5_clicked()
         string dirName = pathfrom.substr(index, pathfrom.back());
         char* unpackpath = new char[200];
         strcpy(unpackpath, named);
-//        strcat(unpackpath, "/");
-//        strcat(unpackpath, dirName.c_str());
 
         cout << "unpack " << fileManager.fileList[0] << " to " << unpackpath << endl;
         unpack((char*)fileManager.fileList[0].c_str(), unpackpath);

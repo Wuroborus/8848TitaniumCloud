@@ -63,5 +63,6 @@ bool fileSystem::getFileList(const char* path)
 {
     fileList.clear();
     openDir(path, this->fileList);
+    return true;
 }
 
