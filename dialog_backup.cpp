@@ -36,6 +36,7 @@ void Dialog_backup::on_pushButton_clicked()//备份路径选择
 
 void Dialog_backup::on_pushButton_2_clicked()
 {
+    isRemote = false;
     filePathTo = QFileDialog::getExistingDirectory();
     ui->backTo->setText(filePathTo);
 
@@ -287,6 +288,7 @@ void Dialog_backup::on_checkBox_5_stateChanged(int arg1)
 
 void Dialog_backup::on_pushButton_3_clicked()
 {
+     isRemote = true;
     filePathTo = QFileDialog::getExistingDirectory();
     ui->backTo->setText(filePathTo);
 }
