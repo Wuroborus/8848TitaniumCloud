@@ -27,7 +27,7 @@ Server::Server() {
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(sockfd < 0) {
-        std::cerr << "[ERROR] Error in socket: " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in socket: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout << "[SERVER] Socket created successfully." << std::endl;
@@ -38,7 +38,7 @@ Server::Server() {
 
     e = bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
     if(e < 0) {
-        std::cerr << "[ERROR] Error in bind: " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in bind: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     std::cout << "[SERVER] Binding successful." << std::endl;
@@ -46,7 +46,7 @@ Server::Server() {
     if(listen(sockfd, 10) == 0){
         std::cout << "[SERVER] Listening..." << std::endl;
     }else{
-        std::cerr << "[ERROR] Error in listening: " << std::strerror(errno) << std::endl;
+        std::cerr << "[ERROR] Error in listening: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
     addr_size = sizeof(new_addr);
@@ -77,7 +77,7 @@ void Server::receive_file(const std::string& filepath) {
     if (access(("./backup" + par_dir).c_str(), 00) == -1) {
         std::cout << "[SERVER] Creating directory." << std::endl;
         if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
-            std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
+            std::cerr << "[ERROR] Directory creation failed: " << strerror(errno) << std::endl;
         }
     }
     new_sock = accept(sockfd, (struct sockaddr*)&new_addr, &addr_size);
@@ -101,7 +101,7 @@ void Server::create_dir(const std::string& dirpath) {
     if (access(("./backup" + par_dir).c_str(), 00) == -1) {
         std::cout << "[SERVER] Creating directory." << std::endl;
         if (make_dirs(("./backup" + par_dir).c_str()) == -1) {
-            std::cerr << "[ERROR] Directory creation failed: " << std::strerror(errno) << std::endl;
+            std::cerr << "[ERROR] Directory creation failed: " << strerror(errno) << std::endl;
         }
     }
     make_dirs(("./backup" + dirpath).c_str());
